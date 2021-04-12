@@ -76,11 +76,7 @@
                     actualVelocity = velocity;
                     actualTime = time;
                 }
-                else if(velocityUnit == "m/h" && timeUnit == "h"){
-                    actualTime = time;
-                    actualDistance = 0.001 * distance;
-                }
-                else if(velocityUnit == "m/s"){
+                else if(velocityUnit == "m/s" && timeUnit == "s"){
                     actualDistance = 0.001 * distance;
                     actualTime = time * (1 / 3600);
                 }
