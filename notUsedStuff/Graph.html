@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Narzędzie do rysowania wykresów</title>
+        <link rel="stylesheet" href="Graph.css">
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/processing.js/1.6.0/processing.min.js"></script>
+    </head>
+    <body onload="resetAllGraphParts(), labelFill(), textBoxesFill(), textBoxesGetInput()" onclick="labelFill(), textBoxesGetInput(), textBoxesFill()">
+        <div id="Links">
+            <p class="OtherParts"><a href="Index.html">Strona główna</a></p>
+            <p class="OtherParts"><a href="Accelerated.html">Ruch przyspieszony</a></p>
+            <p class="OtherParts"><a href="Uniform.html">Ruch jednostajny</a></p> 
+            <p class="OtherParts"><a href="FreeFall.html">Swobodny spadek</a></p> 
+            <p class="OtherParts"><a href="Graph.html">Rysowanie wykresów ruchu</a></p>
+            <p class="OtherParts"><a href="Instruction.html">Pomoc</a></p>
+            <p class="OtherParts"><a href="About.html">O projekcie</a></p>
+        </div> <br>
+        <form>
+            <select id="Which Graph" onclick="textBoxesGetInput()" onchange="textBoxesFill()">
+                <option value=0>Etap 1</option>
+                <option value=1>Etap 2</option>
+                <option value=2>Etap 3</option>
+                <option value=3>Etap 4</option>
+                <option value=4>Etap 5</option>
+                <option value=5>Etap 6</option>
+                <option value=6>Etap 7</option>
+                <option value=7>Etap 8</option>
+                <option value=8>Etap 9</option>
+                <option value=9>Etap 10</option>
+            </select>
+            <select id="Which Color" onclick="labelFill(), textBoxesFill(), textBoxesGetInput()">
+                <option value=0>Wykres czerwony</option>
+                <option value=1>Wykres zielony</option>
+                <option value=2>Wykres niebieski</option>
+            </select><br>
+            <select id="Which motion" onclick="labelFill(), textBoxesGetInput(), textBoxesFill()">
+                <option value=0>Ruch przyspieszony</option>
+                <option value=1>Ruch jednostajny</option>
+            </select>
+            <label id="First label"></label>
+            <input type="text" id="First textarea" oninput="textBoxesGetInput()">
+            <label id="Second label"></label>
+            <input type="text" id="Second textarea" oninput="textBoxesGetInput()">
+            <label id="Third label"></label>
+            <input type="text" id="Third textarea" oninput="textBoxesGetInput()">
+            <button type="button" onclick="cleanAllLists(), textBoxesFill()">Wyczyść</button><br>
+            <button type="button" onclick="cleanJustPointsLists(), drawAllTheStuff()">Rysuj</button>
+        </form><br>
+        <select id="S/V/A" onchange="cleanJustPointsLists(), drawAllTheStuff()">
+            <option value=0>s</option>
+            <option value=1>v</option>
+            <option value=2>a</option>
+        </select>
+        <script type="application/processing">
+            var screenX = 1520;
+            var screenY = 550;
+
+            var vp = 0;
+            var a = 0;
+            var vk = 0;
+            var tp = 0;
+            var tk = 0;
+            var sp = 0;
+            var sk = 0;
+
+            var currentV = 0;
+            var currentS = 0;
+            var currentA = 0;
+
+            const pointColor = [];
+
+            const FirstBoxRed = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+            const SecondBoxRed = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+            const ThirdBoxRed = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+            const GraphTypeRed = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+
+            const FirstBoxGreen = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+            const SecondBoxGreen = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+            const ThirdBoxGreen = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+            const GraphTypeGreen = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+
+            const FirstBoxBlue = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+            const SecondBoxBlue = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+            const ThirdBoxBlue = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+            const GraphTypeBlue = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+
+            const pointsX = [];
+            const pointsY = [];
+            
+            setup = function(){
+                size(screenX, screenY);
+                background(255, 255, 255);
+                drawCoordinateSystem();
+                resetAllGraphParts();
+            }
+
+            drawAllTheStuff = function(){
+                drawCoordinateSystem();
+                createGraph();
+                drawGraph();
+            }
+
+            drawCoordinateSystem = function(){
+                stroke(0);
+                background(255, 255, 255);
+                line(20, 20, 20, 530);
+                line(20, 265, 1500, 265);
+                fill(0, 0, 0);
+                triangle(15, 20, 25, 20, 20, 10);
+                triangle(1500, 260, 1500, 270, 1510, 265);
+                textSize(15);
+                text("t", 1500, 285);
+            }
+            
+            createGraph = function(){
+                textBoxesGetInput();
+                var currentColor = 0;
+                var motion = document.getElementById("Which motion").value;
+                var sthVsTime = document.getElementById("S/V/A").value;
+                var iteration = FirstBoxRed.length * 3;
+                for(var i = 0; i < iteration; i++){
+                    if(i < 10){
+                        if(motion == 0){
+                            vp = parseInt(FirstBoxRed[i], 10);
+                            vk = parseInt(SecondBoxRed[i], 10);
+                        }
+                        else if(motion == 1){
+                            sp = parseInt(FirstBoxRed[i], 10);
+                            sk = parseInt(SecondBoxRed[i], 10);
+                        }
+
+                        if(i == 0){
+                            tp = 0;
+                        }
+                        else if(i > 0){
+                            tp = parseInt(ThirdBoxRed[i - 1], 10);
+                        }
+                        tk = tp + parseInt(ThirdBoxRed[i], 10);
+                        currentColor = 0;
+                    }
+                    else if(i >= 10 && i < 20){
+                        if(motion == 0){
+                            vp = parseInt(FirstBoxGreen[i], 10);
+                            vk = parseInt(SecondBoxGreen[i], 10);
+                        }
+                        else if(motion == 1){
+                            sp = parseInt(FirstBoxGreen[i], 10);
+                            sk = parseInt(SecondBoxGreen[i], 10);
+                        }
+
+                        if(i == 0){
+                            tp = 0;
+                        }
+                        else if(i > 0){
+                            tp = parseInt(ThirdBoxGreen[i - 1], 10);
+                        }
+                        tk = tp + parseInt(ThirdBoxGreen[i], 10);
+                        currentColor = 1;
+                    }
+                    else if(i >= 20 && i < 30){
+                        if(motion == 0){
+                            vp = parseInt(FirstBoxBlue[i], 10);
+                            vk = parseInt(SecondBoxBlue[i], 10);
+                        }
+                        else if(motion == 1){
+                            sp = parseInt(FirstBoxBlue[i], 10);
+                            sk = parseInt(SecondBoxBlue[i], 10);
+                        }
+
+                        if(i == 0){
+                            tp = 0;
+                        }
+                        else if(i > 0){
+                            tp = parseInt(ThirdBoxBlue[i - 1], 10);
+                        }
+                        tk = tp + parseInt(ThirdBoxBlue[i], 10);
+                        currentColor = 2;
+                    }
+                    
+                    if(sthVsTime == 0){
+                        if(motion == 0){
+                            a = (vk - vp) / (tk - tp);
+                            for(var j = tp; j <= tk; j+=0.01){
+                                currentS = (a * j * j)/2;
+                                pointsX.push(20 + j);
+                                pointsY.push(265 - currentS);
+                                if(currentColor == 0){
+                                    pointColor.push(0);
+                                }
+                                else if(currentColor == 1){
+                                    pointColor.push(1);
+                                }
+                                else if(currentColor == 2){
+                                    pointColor.push(2);
+                                }
+                            }
+                        }
+                        else if(motion == 1){
+                            v = (sk - sp) / (tk - tp);
+                            for(var j = tp; j <= tk; j+=0.01){
+                                currentS = v * j;
+                                pointsX.push(20 + j);
+                                pointsY.push(265 - currentS);
+                                if(currentColor == 0){
+                                    pointColor.push(0);
+                                }
+                                else if(currentColor == 1){
+                                    pointColor.push(1);
+                                }
+                                else if(currentColor == 2){
+                                    pointColor.push(2);
+                                }
+                            }
+                        }
+                    }
+                    else if(sthVsTime == 1){
+                        if(motion == 0){
+                            a = (vk - vp) / (tk - tp);
+                            for(var j = tp; j <= tk; j+=0.01){
+                                currentV = a * j;
+                                pointsX.push(20 + j);
+                                pointsY.push(265 - currentV);
+                                if(currentColor == 0){
+                                    pointColor.push(0);
+                                }
+                                else if(currentColor == 1){
+                                    pointColor.push(1);
+                                }
+                                else if(currentColor == 2){
+                                    pointColor.push(2);
+                                }
+                            }
+                        }
+                        else if(motion == 1){
+                            v = (sk - sp) / (tk - tp);
+                            for(var j = tp; j <= tk; j+=0.01){
+                                currentV = v;
+                                pointsX.push(20 + j);
+                                pointsY.push(265 - currentV);
+                                if(currentColor == 0){
+                                    pointColor.push(0);
+                                }
+                                else if(currentColor == 1){
+                                    pointColor.push(1);
+                                }
+                                else if(currentColor == 2){
+                                    pointColor.push(2);
+                                }
+                            }
+                        }
+                    }
+                    else if(sthVsTime == 2){
+                        if(motion == 0){
+                            a = (vk - vp) / (tk - tp);
+                            for(var j = tp; j <= tk; j+=0.01){
+                                currentA = a;
+                                pointsX.push(20 + j);
+                                pointsY.push(265 - currentA);
+                                if(currentColor == 0){
+                                    pointColor.push(0);
+                                }
+                                else if(currentColor == 1){
+                                    pointColor.push(1);
+                                }
+                                else if(currentColor == 2){
+                                    pointColor.push(2);
+                                }
+                            }
+                        }
+                        else if(motion == 1){
+                            v = (sk - sp) / (tk - tp);
+                            for(var j = tp; j <= tk; j+=0.01){
+                                currentA = 0;
+                                pointsX.push(20 + j);
+                                pointsY.push(265 - currentA);
+                                if(currentColor == 0){
+                                    pointColor.push(0);
+                                }
+                                else if(currentColor == 1){
+                                    pointColor.push(1);
+                                }
+                                else if(currentColor == 2){
+                                    pointColor.push(2);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        
+            drawGraph = function(){
+                for(var i = 0; i < pointColor.length; i++){
+                    noStroke();
+                    if(pointColor[i] == 0){
+                        fill(255, 0, 0);
+                    }
+                    else if(pointColor[i] == 1){
+                        fill(0, 255, 0);
+                    }
+                    else{
+                        fill(0, 0, 255);
+                    }
+                    ellipse(pointsX[i], pointsY[i], 0.5, 0.5);
+                }
+            }
+            
+            cleanAllLists = function(){
+                cleanJustPointsLists();
+                resetAllGraphParts();
+                drawCoordinateSystem();
+            }
+
+            cleanJustPointsLists = function(){
+                pointsX.length = 0;
+                pointsY.length = 0;
+                pointColor.length = 0;
+            }
+
+            resetAllGraphParts = function(){
+                for(var i = 0; i < 10; i++){
+                    FirstBoxRed[i] = 0;
+                    SecondBoxRed[i] = 0;
+                    ThirdBoxRed[i] = 0;
+                    GraphTypeRed[i] = 0;
+                    FirstBoxGreen[i] = 0;
+                    SecondBoxGreen[i] = 0;
+                    ThirdBoxGreen[i] = 0;
+                    GraphTypeGreen[i] = 0;
+                    FirstBoxBlue[i] = 0;
+                    SecondBoxBlue[i] = 0;
+                    ThirdBoxBlue[i] = 0;
+                    GraphTypeBlue[i] = 0;
+                }
+            }
+
+            textBoxesGetInput = function(){
+                var graphNumber = document.getElementById("Which Graph").value;
+                var color = document.getElementById("Which Color").value;
+                if(color == 0){
+                    FirstBoxRed[graphNumber] = document.getElementById("First textarea").value;
+                    SecondBoxRed[graphNumber] = document.getElementById("Second textarea").value;
+                    ThirdBoxRed[graphNumber] = document.getElementById("Third textarea").value;
+                    GraphTypeRed[graphNumber] = document.getElementById("Which motion").value;
+                }
+                else if(color == 1){
+                    FirstBoxGreen[graphNumber] = document.getElementById("First textarea").value;
+                    SecondBoxGreen[graphNumber] = document.getElementById("Second textarea").value;
+                    ThirdBoxGreen[graphNumber] = document.getElementById("Third textarea").value;
+                    GraphTypeGreen[graphNumber] = document.getElementById("Which motion").value;
+                }
+                else if(color == 2){
+                    FirstBoxBlue[graphNumber] = document.getElementById("First textarea").value;
+                    SecondBoxBlue[graphNumber] = document.getElementById("Second textarea").value;
+                    ThirdBoxBlue[graphNumber] = document.getElementById("Third textarea").value;
+                    GraphTypeBlue[graphNumber] = document.getElementById("Which motion").value;
+                }
+            }
+
+            textBoxesFill = function(){
+                var graphNumber = document.getElementById("Which Graph").value;
+                var color = document.getElementById("Which Color").value;
+                if(color == 0){
+                    document.getElementById("First textarea").value = FirstBoxRed[graphNumber];
+                    document.getElementById("Second textarea").value = SecondBoxRed[graphNumber];
+                    document.getElementById("Third textarea").value = ThirdBoxRed[graphNumber];
+                }
+                else if(color == 1){
+                    document.getElementById("First textarea").value = FirstBoxGreen[graphNumber];
+                    document.getElementById("Second textarea").value = SecondBoxGreen[graphNumber]
+                    document.getElementById("Third textarea").value = ThirdBoxGreen[graphNumber];
+                }
+                else if(color == 2){
+                    document.getElementById("First textarea").value = FirstBoxBlue[graphNumber];
+                    document.getElementById("Second textarea").value = SecondBoxBlue[graphNumber]
+                    document.getElementById("Third textarea").value = ThirdBoxBlue[graphNumber];
+                }
+            }
+
+            labelFill = function(){
+                var graphNumber = document.getElementById("Which Graph").value;
+                var color = document.getElementById("Which Color").value;
+                var rgb = 0;
+                if(color == 0){
+                    rgb = GraphTypeRed[graphNumber];
+                }
+                else if(color == 1){
+                    rgb = GraphTypeGreen[graphNumber];
+                }
+                else if(color == 2){
+                    rgb = GraphTypeBlue[graphNumber];
+                }
+                
+                if(rgb == 0){
+                    document.getElementById("First label").innerHTML = 'prędkość początkowa';
+                    document.getElementById("Second label").innerHTML = 'prędkość końcowa';
+                    document.getElementById("Third label").innerHTML = 'czas ruchu';
+                }
+                else if(rgb == 1){
+                    document.getElementById("First label").innerHTML = 'droga początkowa';
+                    document.getElementById("Second label").innerHTML = 'droga końcowa';
+                    document.getElementById("Third label").innerHTML = 'czas ruchu';
+                }
+            }
+        </script>
+        <canvas></canvas>
+    </body>
+</html>

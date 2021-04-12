@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Narzędzie do rysowania wykresów</title>
+        <link rel="stylesheet" href="Graph.css">
+        <meta charset="utf-8">
+        <script src="processing.js"></script>
+    </head>
+    <body onload="drawCoordinateSystem(), resizeAllArrays(), fillAllTextboxes()" onclick="">
+        <div id="Links">
+            <p class="OtherSitesParts"><a href="Index.html">Strona główna</a></p>
+            <p class="OtherSitesParts"><a href="Accelerated.html">Ruch przyspieszony</a></p>
+            <p class="OtherSitesParts"><a href="Uniform.html">Ruch jednostajny</a></p> 
+            <p class="OtherSitesParts"><a href="FreeFall.html">Swobodny spadek</a></p> 
+            <p class="OtherSitesParts"><a href="GraphDrawing.html">Rysowanie wykresów ruchu</a></p>
+            <p class="OtherSitesParts"><a href="Instruction.html">Pomoc</a></p>
+            <p class="OtherSitesParts"><a href="About.html">O projekcie</a></p>
+        </div> <br>
+        <form>
+            <select id="Which Part" onclick="" onchange="fillAllTextboxes()">
+                <option value=0>Etap 1</option>
+                <option value=1>Etap 2</option>
+                <option value=2>Etap 3</option>
+                <option value=3>Etap 4</option>
+                <option value=4>Etap 5</option>
+                <option value=5>Etap 6</option>
+                <option value=6>Etap 7</option>
+                <option value=7>Etap 8</option>
+                <option value=8>Etap 9</option>
+                <option value=9>Etap 10</option>
+            </select>
+            <select id="Which Color" onchange="fillAllTextboxes()">
+                <option value=0>Wykres czerwony</option>
+                <option value=1>Wykres zielony</option>
+                <option value=2>Wykres niebieski</option>
+            </select><br>
+            <select id="Which Motion" onclick="">
+                <option value=0>Ruch przyspieszony</option>
+                <option value=1>Ruch jednostajny</option>
+            </select>
+            <label id="First Label"></label>
+            <input type="text" id="First Input" oninput="getInputFromTextBoxes()">
+            <label id="Second Label"></label>
+            <input type="text" id="Second Input" oninput="getInputFromTextBoxes()">
+            <label id="Third Label"></label>
+            <input type="text" id="Third Input" oninput="getInputFromTextBoxes()">
+            <button type="button" onclick="">Wyczyść</button><br>
+            <button type="button" onclick="drawGraph()">Rysuj</button>
+        </form><br>
+        <form>
+            <select id="S/V/A Switch" onchange="drawFullGraph()">
+                <option value=0>s</option>
+                <option value=1>v</option>
+                <option value=2>a</option>
+            </select>
+        </form>
+        
+        <script type="application/processing">
+            var RedColoredGraph = {
+                FirstBox: [],
+                SecondBox: [],
+                ThirdBox: [],
+                GraphType: []
+            };
+            var GreenColoredGraph = {
+                FirstBox: [],
+                SecondBox: [],
+                ThirdBox: [],
+                GraphType: [] 
+            };
+            var BlueColoredGraph = {
+                FirstBox: [],
+                SecondBox: [],
+                ThirdBox: [],
+                GraphType: []
+            };
+            var GraphPoint = {
+                xPos: [],
+                yPos: [],
+                PointColor: []
+            };
+            var CoordinateSystem = {
+                OYxPos: 20,
+                OXyPos: 540,
+                OYlength: 520,
+                OXlength: 1475
+            };
+
+            var maxValuey = 0;
+            var maxValuex = 0;
+            var smallerThanZero = 0;
+
+            var xMultiplier = 0;
+            var yMultiplier = 0;
+
+            setup = function(){
+                size(1515, 560);
+                background(255, 255, 255);
+            }
+
+            resize = function(array, newSize, defaultValue){
+                while(newSize > array.length){
+                    array.push(defaultValue);
+                }
+                array.length = newSize;
+            }
+
+            resizeAllArrays = function(){
+                resize(RedColoredGraph.FirstBox, 10, 0);
+                resize(RedColoredGraph.SecondBox, 10, 0);
+                resize(RedColoredGraph.ThirdBox, 10, 0);
+                resize(RedColoredGraph.GraphType, 10, 0);
+                resize(GreenColoredGraph.FirstBox, 10, 0);
+                resize(GreenColoredGraph.SecondBox, 10, 0);
+                resize(GreenColoredGraph.ThirdBox, 10, 0);
+                resize(GreenColoredGraph.GraphType, 10, 0);
+                resize(BlueColoredGraph.FirstBox, 10, 0);
+                resize(BlueColoredGraph.SecondBox, 10, 0);
+                resize(BlueColoredGraph.ThirdBox, 10, 0);
+                resize(BlueColoredGraph.GraphType, 10, 0);
+            }
+
+            getInputFromTextBoxes = function(){
+                var actuallyChoosenColor = parseInt(document.getElementById("Which Color").value, 10);
+                var actuallyChoosenGraphPart = parseInt(document.getElementById("Which Part").value, 10);
+                if(actuallyChoosenColor == 0){
+                    RedColoredGraph.FirstBox[actuallyChoosenGraphPart] = parseInt(document.getElementById("First Input").value, 10);
+                    RedColoredGraph.SecondBox[actuallyChoosenGraphPart] = parseInt(document.getElementById("Second Input").value, 10);
+                    RedColoredGraph.ThirdBox[actuallyChoosenGraphPart] = parseInt(document.getElementById("Third Input").value, 10);
+                    RedColoredGraph.GraphType[actuallyChoosenGraphPart] = parseInt(document.getElementById("Which Motion").value, 10);
+                }
+                else if(actuallyChoosenColor == 1){
+                    GreenColoredGraph.FirstBox[actuallyChoosenGraphPart] = parseInt(document.getElementById("First Input").value, 10);
+                    GreenColoredGraph.SecondBox[actuallyChoosenGraphPart] = parseInt(document.getElementById("Second Input").value, 10);
+                    GreenColoredGraph.ThirdBox[actuallyChoosenGraphPart] = parseInt(document.getElementById("Third Input").value, 10);
+                    GreenColoredGraph.GraphType[actuallyChoosenGraphPart] = parseInt(document.getElementById("Which Motion").value, 10);
+                }
+                else if(actuallyChoosenColor == 2){
+                    BlueColoredGraph.FirstBox[actuallyChoosenGraphPart] = parseInt(document.getElementById("First Input").value, 10);
+                    BlueColoredGraph.SecondBox[actuallyChoosenGraphPart] = parseInt(document.getElementById("Second Input").value, 10);
+                    BlueColoredGraph.ThirdBox[actuallyChoosenGraphPart] = parseInt(document.getElementById("Third Input").value, 10);
+                    BlueColoredGraph.GraphType[actuallyChoosenGraphPart] = parseInt(document.getElementById("Which Motion").value, 10);
+                }
+                smallerThanZero = 0;
+                CoordinateSystem.OXyPos = 540;
+                maxValuex = 0;
+                maxValuey = 0;
+            }
+
+            fillLabels = function(){
+                var actuallyChoosenMotion = parseInt(document.getElementById("Which Motion").value, 10);
+                if(actuallyChoosenMotion == 0){
+                    document.getElementById("First Label").innerHTML = "prędkość początkowa: ";
+                    document.getElementById("Second Label").innerHTML = "prędkość końcowa: ";
+                }
+                else if(actuallyChoosenMotion == 1){
+                    document.getElementById("First Label").innerHTML = "droga początkowa: ";
+                    document.getElementById("Second Label").innerHTML = "droga końcowa: ";
+                }
+                document.getElementById("Third Label").innerHTML = "czas trwania ruchu: ";
+            }
+
+            createGraphPartsFromTable = function(GraphObject, numberOfGraphParts, graphColorTag, scaleRelatedMultiplier){
+                getTheBestMultiplier();
+                var choosenVariableVsTime = parseInt(document.getElementById("S/V/A Switch").value, 10);
+                for(var i = 0; i < numberOfGraphParts; i++){
+                    if(GraphObject.GraphType[i] == 0){
+                        var startVelocity = GraphObject.FirstBox[i] * yMultiplier;
+                        var endVelocity = GraphObject.SecondBox[i] * yMultiplier;
+                    }
+                    else if(GraphObject.GraphType[i] == 1){
+                        var startDistance = GraphObject.FirstBox[i] * yMultiplier;
+                        var endDistance = GraphObject.SecondBox[i] * yMultiplier;
+                    }
+
+                    if(i > 0){
+                        var startTime = GraphObject.ThirdBox[i - 1] * xMultiplier;
+                    }
+                    else{
+                        var startTime = 0;
+                    }
+                    var endTime = (GraphObject.ThirdBox[i] + startTime) * xMultiplier;
+                    //If graph is distance vs time
+                    if(choosenVariableVsTime == 0){
+                        var currentDistance = 0;
+                        if(GraphObject.GraphType[i] == 0){
+                            var acceleration = (endVelocity - startVelocity) / (endTime - startTime);
+                            for(var j = startTime; j < endTime; j += scaleRelatedMultiplier){
+                                currentDistance = startVelocity * startTime + (acceleration * j * j) / 2;
+                                GraphPoint.xPos.push(j);
+                                GraphPoint.yPos.push(currentDistance);
+                                GraphPoint.PointColor.push(graphColorTag);
+                                //Debug 
+                                //var size = GraphPoint.xPos.length - 1;
+                                
+                                //console.log(GraphPoint.PointColor[size]);
+                                //Debug end
+                            }
+                            
+                        }
+                        else if(GraphObject.GraphType[i] == 1){
+                            var velocity = (endDistance - startDistance) / (endTime - startTime);
+                            for(var j = startTime; j < endTime; j += scaleRelatedMultiplier){
+                                currentDistance = startDistance + velocity * j;
+                                GraphPoint.xPos.push(j);
+                                GraphPoint.yPos.push(currentDistance);
+                                GraphPoint.PointColor.push(graphColorTag);
+                                //Debug 
+                                //var size = GraphPoint.xPos.length - 1;
+                                
+                                //console.log(GraphPoint.PointColor[size]);
+                                //Debug end
+                            }
+                        }
+                    }
+                    //If graph is velocity vs time
+                    else if(choosenVariableVsTime == 1){
+                        var currentVelocity = 0;
+                        if(GraphObject.GraphType[i] == 0){
+                            var acceleration = (endVelocity - startVelocity) / (endTime - startTime);
+                            for(var j = startTime; j < endTime; j += scaleRelatedMultiplier){
+                                currentVelocity = startVelocity + acceleration * j;
+                                GraphPoint.xPos.push(j);
+                                GraphPoint.yPos.push(currentVelocity);
+                                GraphPoint.PointColor.push(graphColorTag);
+                                //Debug 
+                                //var size = GraphPoint.xPos.length - 1;
+                                //console.log(GraphPoint.PointColor[size]);
+                                //Debug end
+                            }
+                        }
+                        else if(GraphObject.GraphType[i] == 1){
+                            var velocity = (endDistance - startDistance) / (endTime - startTime);
+                            for(var j = startTime; j < endTime; j += scaleRelatedMultiplier){
+                                currentVelocity = velocity;
+                                GraphPoint.xPos.push(j);
+                                GraphPoint.yPos.push(currentVelocity);
+                                GraphPoint.PointColor.push(graphColorTag);
+                                //Debug 
+                                //var size = GraphPoint.xPos.length - 1;
+                                
+                                //console.log(GraphPoint.PointColor[size]);
+                                //Debug end
+                            }
+                        }
+                    }
+                    //If graph is acceleration vs time
+                    else if(choosenVariableVsTime == 2){
+                        var currentAcceleration = 0;
+                        if(GraphObject.GraphType[i] == 0){
+                            var acceleration = (endVelocity - startVelocity) / (endTime - startTime);
+                            for(var j = 0; j < endTime; j += scaleRelatedMultiplier){
+                                currentAcceleration = acceleration;
+                                GraphPoint.xPos.push(j);
+                                GraphPoint.yPos.push(currentAcceleration);
+                                GraphPoint.PointColor.push(graphColorTag);
+                                //Debug 
+                                //var size = GraphPoint.xPos.length - 1;
+                                
+                                //console.log(GraphPoint.PointColor[size]);
+                                //Debug end
+                            }
+                        }
+                        else if(GraphObject.GraphType[i] == 1){
+                            for(var j = 0; j < endTime; j += scaleRelatedMultiplier){
+                                currentAcceleration = 0;
+                                GraphPoint.xPos.push(j);
+                                GraphPoint.yPos.push(currentAcceleration);
+                                GraphPoint.PointColor.push(graphColorTag);
+                                //Debug 
+                                //var size = GraphPoint.xPos.length - 1;
+                                
+                                //console.log(GraphPoint.PointColor[size]);
+                                //Debug end
+                            }
+                        }
+                    }
+                    
+                }
+                console.log("Done");
+            }
+
+            getTableMulitiplier = function(ColorArray){
+                var choosenVariableVsTime = parseInt(document.getElementById("S/V/A Switch").value, 10);
+                var resultOfEquation = 0;
+                var xAxisMaxNumber = 0;
+                for(var i = 0; i < ColorArray.FirstBox.length; i++){
+                    if(ColorArray.GraphType[i] == 0){
+                        var startVelocity = ColorArray.FirstBox[i];
+                        var endVelocity = ColorArray.SecondBox[i];
+                    }
+                    else if(ColorArray.GraphType[i] == 1){
+                        var startDistance = ColorArray.FirstBox[i];
+                        var endDistance = ColorArray.SecondBox[i];
+                    }
+
+                    if(i > 0){
+                        var startTime = ColorArray.ThirdBox[i - 1];
+                    }
+                    else{
+                        var startTime = 0;
+                    }
+                    var endTime = ColorArray.ThirdBox[i] + startTime;
+                    if(choosenVariableVsTime == 0){
+                        if(ColorArray.GraphType[i] == 0){
+                            var acceleration = (endVelocity - startVelocity) / (endTime - startTime);
+                            resultOfEquation = startVelocity * startTime + (acceleration * endTime * endTime) / 2;
+                        }
+                        else if(ColorArray.GraphType[i] == 1){
+                            var velocity = (endDistance - startDistance) / (endTime - startTime);
+                            resultOfEquation = startDistance + velocity * endTime;
+                        }
+                    }
+                    else if(choosenVariableVsTime == 1){
+                        if(ColorArray.GraphType[i] == 0){
+                            var acceleration = (endVelocity - startVelocity) / (endTime - startTime);
+                            if(ColorArray.FirstBox[i] < ColorArray.SecondBox[i]){
+                                resultOfEquation = startVelocity + acceleration * endTime;
+                            }
+                            else{
+                                resultOfEquation = startVelocity;
+                            }
+                        }
+                        else if(ColorArray.GraphType[i] == 1){
+                            var velocity = (endDistance - startDistance) / (endTime - startTime);
+                            resultOfEquation = velocity;
+                        }
+                    }
+                    else if(choosenVariableVsTime == 2){
+                        if(ColorArray.GraphType[i] == 0){
+                            var acceleration = (endVelocity - startVelocity) / (endTime - startTime);
+                            resultOfEquation = acceleration;
+                        }
+                        else if(ColorArray.GraphType[i] == 1){
+                            resultOfEquation = 0;
+                        }
+                    }
+                    if(ColorArray.FirstBox[i] < 0 || ColorArray.SecondBox[i] < 0){
+                        smallerThanZero = 1;
+                        CoordinateSystem.OXyPos = 270;
+                    }
+                    xAxisMaxNumber += ColorArray.ThirdBox[i];
+                    if(maxValuey < resultOfEquation){
+                        maxValuey = resultOfEquation;
+                    }
+                }
+                if(maxValuex < xAxisMaxNumber){
+                    maxValuex = xAxisMaxNumber;
+                }
+            }
+
+            getTheBestMultiplier = function(){
+                getTableMulitiplier(RedColoredGraph);
+                getTableMulitiplier(GreenColoredGraph);
+                getTableMulitiplier(BlueColoredGraph);
+                if(smallerThanZero == 0){
+                    yMultiplier = 260 / maxValuey;
+                }
+                else{
+                    yMultiplier = 520 / maxValuey;
+                }
+                xMultiplier = 1475 / maxValuex;
+            }
+
+            drawGraph = function(){
+                setupGraph();
+                noStroke();
+                var PointX = 0;
+                var PointY = 0;
+                console.log(GraphPoint.xPos.length);
+                console.log(GraphPoint.yPos.length);
+                for(var i = 1; i <= GraphPoint.xPos.length; i++){
+                    startPointX = 20 + GraphPoint.xPos[i];
+                    startPointY = 540 - GraphPoint.yPos[i];
+                    if(GraphPoint.PointColor[i] == 0){
+                        fill(255, 0, 0);
+                    }
+                    else if(GraphPoint.PointColor[i] == 1){
+                        fill(0, 255, 0);
+                    }
+                    else if(GraphPoint.PointColor[i] == 2){
+                        fill(0, 0, 255);
+                    }
+                    ellipse(PointX, PointY, 0.4, 0.4);
+                    //console.log("Line drawn");
+                }
+                console.log("Also done");
+            }
+
+            setupGraph = function(){
+                createGraphPartsFromTable(RedColoredGraph, 10, 0, 0.01);
+                createGraphPartsFromTable(GreenColoredGraph, 10, 1, 0.01);
+                createGraphPartsFromTable(BlueColoredGraph, 10, 2, 0.01);
+            }
+
+            drawFullGraph = function(){
+                setupGraph();
+                drawCoordinateSystem();
+                inputNumbersOnGraphScale();
+                drawGraph();
+            }
+
+            drawCoordinateSystem = function(){
+                stroke(0);
+                background(255, 255, 255);
+                line(CoordinateSystem.OYxPos, CoordinateSystem.OXyPos, CoordinateSystem.OYxPos, CoordinateSystem.OXyPos - CoordinateSystem.OYlength);
+                line(CoordinateSystem.OYxPos, CoordinateSystem.OXyPos, CoordinateSystem.OYxPos + CoordinateSystem.OXlength, CoordinateSystem.OXyPos);
+                fill(0, 0, 0);
+                triangle(CoordinateSystem.OYxPos - 5, CoordinateSystem.OXyPos - CoordinateSystem.OYlength, CoordinateSystem.OYxPos + 5, CoordinateSystem.OXyPos - CoordinateSystem.OYlength, CoordinateSystem.OYxPos, CoordinateSystem.OXyPos - CoordinateSystem.OYlength - 10);
+                triangle(CoordinateSystem.OYxPos + CoordinateSystem.OXlength, CoordinateSystem.OXyPos - 5, CoordinateSystem.OYxPos + CoordinateSystem.OXlength, CoordinateSystem.OXyPos + 5, CoordinateSystem.OYxPos + CoordinateSystem.OXlength + 10, CoordinateSystem.OXyPos);
+                for(var i = 44; i <= CoordinateSystem.OXyPos - 40; i += 24){
+                    line(CoordinateSystem.OYxPos - 5, i, CoordinateSystem.OYxPos + 5, i);
+                }
+                for(var i = CoordinateSystem.OYxPos + 49; i <= CoordinateSystem.OYxPos + CoordinateSystem.OXlength - 5; i += 49){
+                    line(i, CoordinateSystem.OXyPos + 5, i, CoordinateSystem.OXyPos - 5);
+                }
+            }
+
+            inputNumbersOnGraphScale = function(){
+                
+            }
+
+            fillAllTextboxes = function(){
+                var actuallyChoosenColor = parseInt(document.getElementById("Which Color").value, 10);
+                var actuallyChoosenGraphPart = parseInt(document.getElementById("Which Part").value, 10);
+                if(actuallyChoosenColor == 0){
+                    document.getElementById("First Input").value = RedColoredGraph.FirstBox[actuallyChoosenGraphPart];
+                    document.getElementById("Second Input").value = RedColoredGraph.SecondBox[actuallyChoosenGraphPart];
+                    document.getElementById("Third Input").value = RedColoredGraph.ThirdBox[actuallyChoosenGraphPart];
+                    document.getElementById("Which Motion").value = RedColoredGraph.GraphType[actuallyChoosenGraphPart];
+                }
+                else if(actuallyChoosenColor == 1){
+                    document.getElementById("First Input").value = GreenColoredGraph.FirstBox[actuallyChoosenGraphPart];
+                    document.getElementById("Second Input").value = GreenColoredGraph.SecondBox[actuallyChoosenGraphPart];
+                    document.getElementById("Third Input").value = GreenColoredGraph.ThirdBox[actuallyChoosenGraphPart];
+                    document.getElementById("Which Motion").value = GreenColoredGraph.GraphType[actuallyChoosenGraphPart];
+                }
+                else if(actuallyChoosenColor == 2){
+                    document.getElementById("First Input").value = BlueColoredGraph.FirstBox[actuallyChoosenGraphPart];
+                    document.getElementById("Second Input").value = BlueColoredGraph.SecondBox[actuallyChoosenGraphPart];
+                    document.getElementById("Third Input").value = BlueColoredGraph.ThirdBox[actuallyChoosenGraphPart];
+                    document.getElementById("Which Motion").value = BlueColoredGraph.GraphType[actuallyChoosenGraphPart];
+                }
+            }
+        </script>
+        <canvas></canvas>
+    </body>
+</html>

@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>Ruch jednostajnie przyspieszony</title>
+    <link rel="stylesheet" href="../styles/Accelerated.css">
+    <script src="../processing.js"></script>
+    <meta charset="utf-8">
+</head>
+
+<body onload="resetClicked(), getInputFromTextboxes(), getUnits()">
+    <div id="Links">
+        <p class="OtherSitesParts"><a class="topLinks" href="Index.html">Strona główna</a></p>
+        <p class="OtherSitesParts"><a class="topLinks" href="Accelerated.html">Ruch jednostajnie przyspieszony</a></p>
+        <p class="OtherSitesParts"><a class="topLinks" href="Uniform.html">Ruch jednostajny</a></p> 
+        <p class="OtherSitesParts"><a class="topLinks" href="FreeFall.html">Swobodny spadek</a></p> 
+        <p class="OtherSitesParts"><a class="topLinks" href="Instruction.html">Pomoc</a></p>
+        <p class="OtherSitesParts"><a class="topLinks" href="About.html">O projekcie</a></p>
+    </div> <br>
+    <div id="innerBox">
+        <header><h1 id="title">Ruch jednostajnie przyspieszony</h1>
+            <hr size="10px" width="100%" color="black">
+        </header>
+        <form id="settings">
+            <label id="startingVelocityLabel" name="startingVelocityLabel" class="settingLabel"><b>Początkowa prędkość</b></label> <input type="text" id="startingVelocityTxt" oninput="getInputFromTextboxes()"> <br><br>
+            <label id="finalVelocityLabel" name="finalVelocityLabel" class="settingLabel"><b>Końcowa prędkość</b></label> <input type="text" id="finalVelocityTxt" oninput="getInputFromTextboxes()"><br><br>
+            <label class="settingLabel"><b>Jednostka prędkości</b></label> <select id="velocityUnitSelect" onchange="getUnits()"><option value="km">[km/h]</option><option value="m">[m/s]</option></select><br><br><br>
+            <label id = "timeLabel" name="timeLabel" class="settingLabel"><b>Czas ruchu</b></label> <input type="text" id="timeTxt" oninput="getInputFromTextboxes()"> <select id="timeUnitSelect" onchange="getUnits()"><option value="h">[h]</option><option value="s">[s]</option></select><br>
+            <button id="startFlightButton" type="button" onclick="startClicked()"><b>Start</b></button><button type="button" id="resetButton" name="resetButton" onclick="resetClicked(), fillTextboxesWithValues()"><b>Reset</b></button><br><br>
+        </form>
+        <script type="application/processing">
+            var partOfAnimation = 0;
+            PIimage small;
+            PIimage medium;
+            PIimage big;
+            var distance = 0;
+            var time = 0;
+            var velocity = 0;
+            var velocityStarting = 0;
+            var velocityEnding = 0;
+            var acceleration = 0;
+            var velocityUnit = "km/h";
+            var accelerationUnit = "km/h2"
+            var timeUnit = "h";
+            var xPos = 0;
+            var started = false;
+            var leftEarth = false;
+            var reachedEnd = false;
+            var distanceStarting = 0;
+            var accelerationStarting = 0;
+            var timeStarting = 0;
+            var iteratorStarting = 0;
+            
+            var iteratorLeftEarth = 0;
+            var actualVelocity = 0;
+            var actualTime = 0;
+            var veryActualDistance = 0;
+
+            var reseted = false;
+
+            setup = function(){
+                background(255, 255, 255);
+                size(1367, 650);
+                frameRate(60);
+                small = loadImage("../backgrounds/close.png");
+                medium = loadImage("../backgrounds/medium_v2.png");
+                big = loadImage("../backgrounds/farAway.png");
+                xPos = getWhichMap("small");
+            }
+
+            draw = function(){
+                var size;
+                getUnits();
+                if(velocityUnit == "km/h" && timeUnit == "h"){
+                    actualVelocity = velocity;
+                    actualTime = time;
+                }
+                else if(velocityUnit == "m/h"){
+                    actualTime = time;
+                    actualDistance = 0.001 * distance;
+                }
+                else if(velocityUnit == "m/s"){
+                    actualDistance = 0.001 * distance;
+                    actualTime = time * (1 / 3600);
+                }
+                else if(velocityUnit == "km/s"){
+                    actualDistance = distance;
+                    actualTime = time * (1 / 3600);
+                }
+                //setting scale
+                if(actualDistance < 5500){
+                    size = "small";
+                }
+                else if(actualDistance < 11000){
+                    size = "medium"
+                }
+                else if(actualDistance < 28406){
+                    size = "big"
+                }
+                veryActualDistance = actualDistance * getMultiplier(size);
+                velocity = veryActualDistance / actualTime;
+                drawBackground(size);
+                if(distance != 0 && time != 0){
+                    if(started){
+                        distanceStarting = getEarthEndingPoint(size) - getWhichMap(size);
+                        timeStarting = (2 * distanceStarting) / velocity;
+                        accelerationStarting = velocity / timeStarting;
+                        xPos = getWhichMap(size) + 0.5 * accelerationStarting * iteratorStarting * iteratorStarting;
+                        iteratorStarting += 0.01;
+                        drawSpaceship(xPos, 325, 20, 20, "spaceship", true);
+                        if(iteratorStarting >= timeStarting){
+                            iteratorStarting = 0;
+                            started = false;
+                            leftEarth = true;
+                            xPos = getEarthEndingPoint(size);
+                        }
+                    }
+                    else if(leftEarth){
+                        xPos = getEarthEndingPoint(size) + velocity * iteratorLeftEarth;
+                        iteratorLeftEarth += 0.01;
+                        drawSpaceship(xPos, 325, 20, 20, "spaceship", false);
+                        if(iteratorLeftEarth >= actualTime){
+                            iteratorLeftEarth = 0;
+                            leftEarth = false;
+                            reachedEnd = true;
+                            xPos = getEarthEndingPoint(size) + veryActualDistance;
+                        }
+                    }
+                    else if(reachedEnd){
+                        xPos = getEarthEndingPoint(size) + veryActualDistance;
+                        drawSpaceship(xPos, 325, 20, 20, "spaceship", false);
+                    }
+                    else{
+                        xPos = getWhichMap(size);
+                        drawSpaceship(xPos, 325, 20, 20, "spaceship", false);
+                    }
+                }
+                else{
+                    xPos = getWhichMap(size);
+                    drawSpaceship(xPos, 325, 20, 20, "spaceship", false);
+                }
+                //setting text
+                textSize(32);
+                fill(#FFFFFF);
+                if(leftEarth){
+                    text("Droga: " + Math.floor(velocity * iteratorLeftEarth / getMultiplier(size) * 10000)/10000 + " km", 950, 60);
+                }
+                else if(reachedEnd){
+                    text("Droga: " + Math.floor(velocity * actualTime / getMultiplier(size) * 10000)/10000 + " km", 950, 60);
+                }
+                else{
+                    text("Droga: " + 0 + " km", 950, 60);
+                }
+                //setting text
+                if(started){
+                    text("Prędkość: " + Math.floor(accelerationStarting * iteratorStarting / getMultiplier(size) * 10000)/10000 + " km/h", 950, 95);
+                }
+                else if(leftEarth){
+                    text("Prędkość: " + Math.floor(velocity / getMultiplier(size) * 10000)/10000 + " km/h", 950, 95);
+                }
+                else{
+                    text("Prędkość: " + 0 + " km/h", 950, 95);
+                }
+                //setting text
+                if(reachedEnd){
+                    text("Czas: " + Math.floor(time * 10000)/10000 + " h", 950, 130);
+                }
+                else{
+                    text("Czas: " + Math.floor(iteratorLeftEarth * 10000)/10000 + " h", 950, 130);
+                }
+            }
+
+            drawBackground = function(size){
+                background(0, 0, 30);
+                if(size == "small"){
+                    image(small, 0, 0, width, height);
+                }
+                else if(size == "medium"){
+                    image(medium, 0, 0, width, height);
+                }
+                else if(size == "big"){
+                    image(big, 0, 0, width, height);
+                }
+            }
+
+            drawSpaceship = function(x, y, width, height, type, flying){
+                if(type == "spaceship"){
+                    noStroke();
+                    fill(50, 50, 50);
+                    triangle(x, y - 0.5*height, x, y + 0.5*height, x + 0.6*width, y);
+                        
+                    
+                    fill(180, 180, 180);
+                    rect(x + 0.25*width, y - 0.5*height, width - 0.25*width, height);
+                    triangle(x + 1.15*width, y - 0.5*height, x + 1.15*width, y + 0.5*height, x + 1.6*width, y);
+                        
+    
+                    fill(120, 120, 120);
+                    rect(x + width, y - 0.45*height, 0.2*width, height - 0.1*height);
+                    ellipse(x + 1.1*height, y - 0.45*width, 0.2*width, 0.2*height);
+                    ellipse(x + 1.1*height, y + 0.45*width, 0.2*width, 0.2*height);
+    
+                    if(flying){
+                        if(partOfAnimation >= 0 && partOfAnimation <= 4){
+                            fill(255, 106, 0);
+                            partOfAnimation++;
+                        }
+                        else if(partOfAnimation > 4 && partOfAnimation <= 9){
+                            fill(255, 132, 0);
+                            partOfAnimation++;
+                        }
+                        else if(partOfAnimation > 9 && partOfAnimation <= 14){
+                            fill(255, 162, 0);
+                            partOfAnimation++;
+                        }
+                        else if(partOfAnimation > 14 && partOfAnimation < 20){
+                            fill(255, 183, 0);
+                            partOfAnimation++;
+                        }
+                        else if(partOfAnimation == 20){
+                            partOfAnimation = 0;
+                        }
+                        triangle(x, y + 0.45*height, x, y + 0.2*height, x - 0.5*width, y + 0.25*height);
+                        triangle(x, y - 0.45*height, x, y - 0.2*height, x - 0.5*width, y - 0.25*height);
+                        triangle(x, y + 0.19*height, x, y - 0.19*height, x - 0.5*width, y);
+                    }
+
+                    fill(255, 20, 20);
+                    triangle(x + 1.4*width, y + 0.2*height, x + 1.4*width, y - 0.2*height, x + 1.6*width, y);
+                    triangle(x + 0.6*width, y - 0.47*height, x + 0.4*width, y - 0.65*height, x - 0.1*width, y - 0.6*height);
+                    triangle(x + 0.6*width, y + 0.47*height, x + 0.4*width, y + 0.65*height, x - 0.1*width, y + 0.6*height);
+    
+                    stroke(255, 0, 0);
+                    line(x - 0.1*width, y, x + 0.6*width, y);
+
+                }
+            }
+
+            getWhichMap = function(size){
+                if(size == "big"){
+                    return 135;
+                }
+                else if(size == "medium"){
+                    return 55;
+                }
+                else if(size == "small"){
+                    return 340;
+                }
+            }
+
+            getEarthEndingPoint = function(size){
+                if(size == "big"){
+                    return 400;
+                }
+                else if(size == "medium"){
+                    return 475;
+                }
+                else if(size == "small"){
+                    return 770;
+                }
+            }
+
+            getInputFromTextboxes = function(){
+                if(reseted){
+                    if(parseInt(document.getElementById("startingVelocityTxt").value, 10) > 28405 && distanceUnit == "km"){
+                        alert("Podano zbyt dużą wartość! Maksymalna wartość to 28000");
+                        distance = 24000;
+                    }
+                    else if(parseInt(document.getElementById("distanceTxt").value, 10) > 28405000 && distanceUnit == "m"){
+                        alert("Podano zbyt dużą wartość! Maksymalna wartość to 28000000");
+                        distance = 24000000;
+                    }
+                    else if(parseInt(document.getElementById("timeTxt").value, 10) >= 2147483647 || parseInt(document.getElementById("timeTxt").value, 10) < 0){
+                        alert("Wartość czasu nie może wykraczać poza 2147483647");
+                        time = 10000;
+                    }   
+                    else{
+                        distance = parseInt(document.getElementById("startingVelocityTxt").value, 10);
+                        time = parseInt(document.getElementById("timeTxt").value, 10);
+                    }
+                    fillTextboxesWithValues();
+                }
+            }
+
+            fillTextboxesWithValues = function(){
+                document.getElementById("startingVelocityTxt").value = velocityStarting;
+                document.getElementById("finalVelocityTxt").value = velocityEnding;
+                document.getElementById("timeTxt").value = time;
+            }
+
+            getUnits = function(){
+                if(reseted){
+                    velocityUnit = document.getElementById("velocityUnitSelect").value;
+                    timeUnit = document.getElementById("timeUnitSelect").value;
+                }
+            }
+
+            getMultiplier = function(size){
+                if(size == "small"){
+                    return 430/5500;
+                }
+                else if(size == "medium"){
+                    return 690/11000;
+                }
+                else if(size == "big"){
+                    return 755/24000;
+                }
+            }
+
+            resetClicked = function(){
+                time = 0;
+                velocityStarting = 0;
+                velocityEnding = 0;
+                document.getElementById("startingVelocityTxt").value = velocityStarting;
+                document.getElementById("finalVelocityTxt").value = velocityEnding;
+                document.getElementById("timeTxt").value = time;
+
+                velocityUnit = "km/h";
+                timeUnit = "h";
+                document.getElementById("distanceUnitSelect").value = "km/h";
+                document.getElementById("timeUnitSelect").value = "h";
+
+                reachedEnd = false;
+                started = false;
+                leftEarth = false;
+                xPos = getWhichMap("small");
+
+                distanceStarting = 0;
+                accelerationStarting = 0;
+                timeStarting = 0;
+                iteratorStarting = 0;
+            
+                iteratorLeftEarth = 0;
+
+                reseted = true;
+                getInputFromTextboxes();
+                getUnits();
+            }
+
+            startClicked = function(){
+                started = true;
+                reseted = false;
+            }
+        </script>
+        <canvas></canvas>
+        <p><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+            <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+            <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+            <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+            <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+            <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+            <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+            <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+        </p>
+    </div>
+    <div id="bottomPart">
+        <p id="allBottomLinks">
+            <p><a href="Index.html" class="bottomLinks">Strona główna</a></p>
+            <p><a href="Accelerated.html" class="bottomLinks" >Ruch jednostajnie przyspieszony</a> </p>
+            <p><a href="Uniform.html" class="bottomLinks">Ruch jednostajny</a></p> 
+            <p><a href="FreeFall.html" class="bottomLinks">Swobodny spadek</a></p> 
+            <p><a href="Instruction.html" class="bottomLinks">Pomoc</a></p>
+            <p><a href="About.html" class="bottomLinks">O projekcie</a></p>  
+            <p id="author">Copyright Wiktor Nedew ©2021</p>
+            <a href="https://stypendiazawodowe.oeiizk.waw.pl/" target="_blank"><img src="../images/header_logos.png" id="logos"></a>
+        </p>
+        <p id="explenation">
+            Projekt został wykonany w ramach programu stypendialnego: "Mazowia, stypendia dla szkół zawodowych"
+        </p>
+    </div>
+</body>
+
+<html>

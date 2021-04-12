@@ -1,0 +1,14 @@
+a = dv / dt
+a = vk - vp / tk - tp
+a * dt = vk - vp
+- vp = a * dt - vk
+vp = - a * dt + vk
+
+s = a * dt * dt
+a = vp / tp
+a = 0 || a = 
+
+s = 1/2 * a * t *t
+a = v / t
+s = 1/2 * v --/ t * t-- *t
+s = 1/2 *v*t

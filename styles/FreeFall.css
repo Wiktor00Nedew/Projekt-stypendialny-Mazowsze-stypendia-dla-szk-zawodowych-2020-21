@@ -1,0 +1,125 @@
+#Links{
+    font-size: 160%;
+    background-color: lightgreen;
+    padding: 13px;
+    width: 100%;
+    text-align: left;
+    position: fixed;
+}
+.OtherSitesParts{
+    display: inline;
+    border-color: black;
+}
+.topLinks{
+    text-decoration: none;
+    color: black;
+    border-color: seagreen;
+    border-style: solid;
+    background-color: seagreen;
+    border-width: 13px;
+}
+.topLinks:hover{
+    background-color: darkgreen;
+    border-color: darkgreen;
+    color: white;
+}
+#innerBox{
+    width: 90%;
+    background-color:rgba(240, 248, 255, 0.884);
+    border-style: solid;
+    border-width: 1px;
+    margin-top: 40px;
+    margin-right: auto;
+    margin-left: auto;
+}
+body{
+    background-image: url("../images/background.jpg");
+    margin: 0px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+#bottomPart{
+    width: 100%;
+    background-color: black;
+    position: absolute;
+    border-color: lightgray;
+    border-width: 1px;
+}
+.bottomLinks{
+    text-align: left;
+    color: white;
+    text-decoration: none;
+    margin-left: 10%;
+    
+}
+.bottomLinks:hover{
+    color:thistle;
+}
+#logos{
+    width: 60%;
+    background-color: white;
+    margin-left: 39%;
+}
+#author{
+    text-align: right;
+    color: white;
+    margin-right: 1%;
+}
+#explenation{
+    text-align: right;
+    color:white;
+    margin-right: 1%;
+}
+#startFallBtn{
+    text-transform: uppercase;
+    background-color: teal;
+    border-radius: 30px;
+    width: 10%;
+    outline: none;
+}
+#settings{
+    padding-left: 5%;
+    padding-top: 15px;
+    font-size: 5px;
+}
+#planet{
+    margin-left: 40%;
+    font-size: 15px;
+    border-radius: 20px;
+    outline: none;
+}
+label{
+    font-size: 15px;
+    border-radius: 20px;
+    outline: none;
+}
+#heightTxt{
+    font-size: 15px;
+    border-radius: 20px;
+    outline: none;
+    
+}
+#resetButton{
+    text-transform: uppercase;
+    background-color: teal;
+    border-radius: 30px;
+    width: 10%;
+    outline: none;
+    margin-left: 58%;
+}
+#heightLabel{
+    text-transform: uppercase;
+}
+#title{
+    margin-left: 38%;
+    margin-right: 35%;
+    margin-top: 0;
+    border-top: solid;
+    border-width: 20px;
+    border-color: #beffbe;
+}
+header{
+    background-color: #beffbe;
+}
+canvas{
+    outline: none;
+}

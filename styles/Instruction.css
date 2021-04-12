@@ -1,0 +1,71 @@
+#Links{
+    font-size: 160%;
+    background-color: lightgreen;
+    padding: 13px;
+    width: 100%;
+    text-align: left;
+    position: fixed;
+}
+.OtherSitesParts{
+    display: inline;
+    border-color: black;
+}
+.topLinks{
+    text-decoration: none;
+    color: black;
+    border-color: seagreen;
+    border-style: solid;
+    background-color: seagreen;
+    border-width: 13px;
+}
+.topLinks:hover{
+    background-color: darkgreen;
+    border-color: darkgreen;
+    color: white;
+}
+#innerBox{
+    width: 90%;
+    background-color:rgba(240, 248, 255, 0.884);
+    border-style: solid;
+    border-width: 1px;
+    margin-top: 40px;
+    margin-right: auto;
+    margin-left: auto;
+}
+body{
+    background-image: url("../images/background.jpg");
+    margin: 0px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+#bottomPart{
+    width: 100%;
+    background-color: black;
+    position: absolute;
+    border-color: lightgray;
+    border-width: 1px;
+}
+.bottomLinks{
+    text-align: left;
+    color: white;
+    text-decoration: none;
+    margin-left: 10%;
+    
+}
+.bottomLinks:hover{
+    color:thistle;
+}
+#logos{
+    width: 60%;
+    background-color: white;
+    margin-left: 39%;
+}
+#author{
+    text-align: right;
+    color: white;
+    margin-right: 1%;
+}
+#explenation{
+    text-align: right;
+    color:white;
+    margin-right: 1%;
+}

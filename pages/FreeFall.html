@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title>Swobodny spadek</title>
+    <link rel="stylesheet" href="../styles/FreeFall.css">
+    <script src="../processing.js"></script>
+    <meta charset="utf-8">
+</head>
+
+<body>
+    <div id="Links">
+        <p class="OtherSitesParts"><a class="topLinks" href="Index.html">Strona główna</a></p>
+        <p class="OtherSitesParts"><a class="topLinks" href="Accelerated.html">Ruch jednostajnie przyspieszony</a></p>
+        <p class="OtherSitesParts"><a class="topLinks" href="Uniform.html">Ruch jednostajny</a></p> 
+        <p class="OtherSitesParts"><a class="topLinks" href="FreeFall.html">Swobodny spadek</a></p> 
+        <p class="OtherSitesParts"><a class="topLinks" href="Instruction.html">Pomoc</a></p>
+        <p class="OtherSitesParts"><a class="topLinks" href="About.html">O projekcie</a></p>
+    </div> <br>
+    <div id="innerBox">
+        <header><h1 id="title">Swobodny spadek</h1>
+            <hr size="10px" width="100%" color="black">
+        </header>
+        <form id="settings">
+            <label name="heightLabel" id="heightLabel"><b>Wysokość spadku</b></label>&NonBreakingSpace;
+            <input name="heightTxt" id="heightTxt" type="text" oninput="getTextboxValue()"><label>[m]</label> <select id="planet" name="planetChooser" onchange="resetClicked()"><option value="earth">Ziemia [9,81 m/s2]</option> <option value="moon">Księżyc [1,62 m/s2]</option> <option value="mars">Mars [3,70 m/s2]</option></select><br><br>
+            <button name="startFallBtn" id="startFallBtn" onclick="startClicked()" type="button"><b>start</b></button><button type="button" id="resetButton" name="resetButton" onclick="resetClicked()"><b>Reset</b></button><br><br>
+        </form>
+        <script type="application/processing">
+            var i = 0;
+            var g = 0;
+            var yPos = 60;
+            var onRun = false;
+            var textboxValue = 0;
+            var reseted = false;
+            var yPosFromTextbox = 0;
+            setup = function(){
+                background(255, 255, 255);
+                size(1367, 650);
+                frameRate(60);
+                console.log("Set upped");
+                resetClicked();
+            }
+            draw = function(){
+                if(onRun && yPos < 570){
+                    reseted = false;
+                    i += 1/60;
+                    if(document.getElementById("planet").value == "earth"){
+                        g = 9.81 * 2.04;
+                    }
+                    else if(document.getElementById("planet").value == "moon"){
+                        g = 1.62 * 2.04;
+                    }
+                    else if(document.getElementById("planet").value == "mars"){
+                        g = 3.70 * 2.04;
+                    }
+                    yPos = yPosFromTextbox + ((g * i * i)/2);
+                }
+                if(yPos > 570){
+                    yPos = 570;
+                }
+                drawBackground(document.getElementById("planet").value);
+                drawSpaceship(683.5, yPos, 30, 30, "spaceship");
+                textSize(32);
+                fill(#FFFFFF);
+                text("Wysokość: " + Math.floor((570 - yPos)/2.04 * 1000)/1000 + " m", 950, 60);
+                text("Prędkość: " + Math.floor((g*i)/2.04 * 1000)/1000 + " m/s", 950, 95);
+                text("Czas: " + Math.floor(i * 1000)/1000 + " s", 950, 130);
+            }
+            drawSpaceship = function(x, y, width, height, type){
+                if(type == "spaceship"){
+                    noStroke();
+                    fill(50, 50, 50);
+                    triangle(x - 0.5*width, y, x + 0.5*width, y, x, y - 0.6*height);
+                    
+                    
+                    fill(180, 180, 180);
+                    rect(x - 0.5*width, y - height, width, height - 0.25*height);
+                    triangle(x - 0.5*width, y - 1.15*height, x + 0.5*width, y - 1.15*height, x, y - 1.6*height);
+                    
+
+                    fill(120, 120, 120);
+                    rect(x - 0.45*width, y - 1.2*height, width - 0.1*width, 0.2*height);
+                    ellipse(x - 0.45*width, y - 1.1*height, 0.2*width, 0.2*height);
+                    ellipse(x + 0.45*width, y - 1.1*height, 0.2*width, 0.2*height);
+
+                    fill(255, 20, 20);
+                    triangle(x - 0.2*width, y - 1.4*height, x + 0.2*width, y - 1.4 * height, x, y - 1.6*height);
+                    triangle(x - 0.47*width, y - 0.6*height, x - 0.65*width, y - 0.4*height, x - 0.6*width, y + 0.1*height);
+                    triangle(x + 0.47*width, y - 0.6*height, x + 0.65*width, y - 0.4*height, x + 0.6*width, y + 0.1*height);
+
+                    stroke(255, 0, 0);
+                    line(x, y + 0.1*height, x, y - 0.6*height);
+                }
+            }
+            drawBackground = function(type){
+                noStroke();
+                if(type == "earth"){
+                    background(80, 160, 180);
+                    fill(55, 140, 0);
+                    ellipse(683.5, 700, 1500, 260);
+                }
+                else if(type == "moon"){
+                    background(0, 0, 0);
+                    fill(142, 149, 149);
+                    ellipse(683.5, 700, 1500, 260);
+                }
+                else if(type == "mars"){
+                    background(240, 149, 70);
+                    fill(216, 107, 34);
+                    ellipse(683.5, 700, 1500, 260);
+                }
+            }
+            startClicked = function(){
+                onRun = true;
+                console.log("Started");
+            }
+            resetClicked = function(){
+                onRun = false;
+                yPos = 60;
+                i = 0;
+                reseted = true;
+                console.log("Reseted");
+                document.getElementById("heightTxt").value = 250;
+                getTextboxValue();
+            }
+            getTextboxValue = function(type){
+                if(reseted){
+                    textboxValue = parseInt(document.getElementById("heightTxt").value, 10);
+                    yPosFromTextbox = 570 - (textboxValue * 2.04);
+                    yPos = yPosFromTextbox;
+                }
+            }
+        </script>
+        <canvas></canvas>
+        <p><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+            <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+            <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+            <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+            <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+            <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+            <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+            <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+        </p>
+    </div>
+    <div id="bottomPart">
+        <p id="allBottomLinks">
+            <p><a href="Index.html" class="bottomLinks">Strona główna</a></p>
+            <p><a href="Accelerated.html" class="bottomLinks" >Ruch jednostajnie przyspieszony</a> </p>
+            <p><a href="Uniform.html" class="bottomLinks">Ruch jednostajny</a></p> 
+            <p><a href="FreeFall.html" class="bottomLinks">Swobodny spadek</a></p> 
+            <p><a href="Instruction.html" class="bottomLinks">Pomoc</a></p>
+            <p><a href="About.html" class="bottomLinks">O projekcie</a></p>  
+            <p id="author">Copyright Wiktor Nedew ©2021</p>
+            <a href="https://stypendiazawodowe.oeiizk.waw.pl/" target="_blank"><img src="../images/header_logos.png" id="logos"></a>
+        </p>
+        <p id="explenation">
+            Projekt został wykonany w ramach programu stypendialnego: "Mazowia, stypendia dla szkół zawodowych"
+        </p>
+    </div>
+</body>
+
+<html>

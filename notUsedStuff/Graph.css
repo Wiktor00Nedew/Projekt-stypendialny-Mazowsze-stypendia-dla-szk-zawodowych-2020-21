@@ -1,0 +1,20 @@
+#Links{
+    font-size: 160%;
+}
+.OtherSitesParts{
+    display: inline;
+    border-color: black;
+}
+a{
+    text-decoration: none;
+    color: black;
+    border-color: seagreen;
+    border-style: solid;
+    background-color: seagreen;
+    border-width: 10px;
+}
+a:hover{
+    background-color: darkgreen;
+    border-color: darkgreen;
+    color: white;
+}
