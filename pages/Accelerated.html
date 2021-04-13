@@ -8,7 +8,6 @@
     <script src="../processing.js"></script>
     <meta charset="utf-8">
 </head>
-
 <body onload="resetClicked(), getInputFromTextboxes(), getUnits()">
     <div id="Links">
         <p class="OtherSitesParts"><a class="topLinks" href="Index.html">Strona główna</a></p>
@@ -40,19 +39,24 @@
             var velocityStarting = 0;
             var velocityEnding = 0;
             var acceleration = 0;
+
             var velocityUnit = "km/h";
             var accelerationUnit = "km/h2"
             var timeUnit = "h";
+
             var xPos = 0;
+
             var started = false;
             var leftEarth = false;
             var reachedEnd = false;
+
             var distanceStarting = 0;
             var accelerationStarting = 0;
             var timeStarting = 0;
             var iteratorStarting = 0;
             
             var iteratorLeftEarth = 0;
+
             var actualVelocity = 0;
             var actualTime = 0;
             var actualDistance = 0;
@@ -72,8 +76,9 @@
             draw = function(){
                 var size;
                 getUnits();
+                velocity = velocityEnding - velocityStarting;
                 if(velocityUnit == "km/h" && timeUnit == "h"){
-                    actualVelocity = velocityEnding - velocityStarting;
+                    actualVelocity = velocity;
                     actualTime = time;
                 }
                 else if(velocityUnit == "m/s" && timeUnit == "s"){
@@ -86,47 +91,74 @@
                     size = "small";
                 }
                 else if(distance < 11000){
-                    size = "medium"
+                    size = "medium";
                 }
                 else if(distance < 28406){
-                    size = "big"
+                    size = "big";
                 }
                 actualDistance = distance * getMultiplier(size);
-                //ended here
+                acceleration = actualVelocity / actualTime;
+                
                 drawBackground(size);
-                if(distance != 0 && time != 0){
-                    if(started){
-                        distanceStarting = getEarthEndingPoint(size) - getWhichMap(size);
-                        timeStarting = (2 * distanceStarting) / velocity;
-                        accelerationStarting = velocity / timeStarting;
-                        xPos = getWhichMap(size) + 0.5 * accelerationStarting * iteratorStarting * iteratorStarting;
-                        iteratorStarting += 0.01;
-                        drawSpaceship(xPos, 325, 20, 20, "spaceship", true);
-                        if(iteratorStarting >= timeStarting){
-                            iteratorStarting = 0;
-                            started = false;
-                            leftEarth = true;
-                            xPos = getEarthEndingPoint(size);
+                if(velocity != 0 && time != 0){
+                    if(velocityStarting == 0){
+                        if(started){
+                            distanceStarting = actualDistance;
+                            timeStarting = actualTime;
+                            accelerationStarting = acceleration;
+                            xPos = getWhichMap(size) + 0.5 * accelerationStarting * iteratorStarting * iteratorStarting;
+                            iteratorStarting += 0.01;
+                            drawSpaceship(xPos, 325, 20, 20, "spaceship", true);
+                            if(iteratorStarting >= timeStarting){
+                                iteratorStarting = 0;
+                                started = false;
+                                reachedEnd = true;
+                                xPos = getWhichMap(size) + actualDistance;
+                            }
+                        }
+                        else if(reachedEnd){
+                            xPos = getWhichMap(size) + actualDistance;
+                            drawSpaceship(xPos, 325, 20, 20, "spaceship", false);
+                        }
+                        else{
+                            xPos = getWhichMap(size);
+                            drawSpaceship(xPos, 325, 20, 20, "spaceship", false);
                         }
                     }
-                    else if(leftEarth){
-                        xPos = getEarthEndingPoint(size) + velocity * iteratorLeftEarth;
-                        iteratorLeftEarth += 0.01;
-                        drawSpaceship(xPos, 325, 20, 20, "spaceship", false);
-                        if(iteratorLeftEarth >= actualTime){
-                            iteratorLeftEarth = 0;
-                            leftEarth = false;
-                            reachedEnd = true;
-                            xPos = getEarthEndingPoint(size) + veryActualDistance;
+                    else if(velocityStarting != 0){
+                        if(started){
+                            distanceStarting = getEarthEndingPoint(size) - getWhichMap(size);
+                            timeStarting = (2 * distanceStarting) / velocityStarting;
+                            accelerationStarting = velocityStarting / timeStarting;
+                            xPos = getWhichMap(size) + 0.5 * accelerationStarting * iteratorStarting * iteratorStarting;
+                            iteratorStarting += 0.01;
+                            drawSpaceship(xPos, 325, 20, 20, "spaceship", true);
+                            if(iteratorStarting >= timeStarting){
+                                iteratorStarting = 0;
+                                started = false;
+                                leftEarth = true;
+                                xPos = getEarthEndingPoint(size);
+                            }
                         }
-                    }
-                    else if(reachedEnd){
-                        xPos = getEarthEndingPoint(size) + veryActualDistance;
-                        drawSpaceship(xPos, 325, 20, 20, "spaceship", false);
-                    }
-                    else{
-                        xPos = getWhichMap(size);
-                        drawSpaceship(xPos, 325, 20, 20, "spaceship", false);
+                        else if(leftEarth){
+                            xPos = getEarthEndingPoint(size) + 0.5 * acceleration * iteratorLeftEarth * iteratorLeftEarth;
+                            iteratorStarting += 0.01;
+                            drawSpaceship(xPos, 325, 20, 20, "spaceship", true);
+                            if(iteratorStarting >= actualTime){
+                                iteratorStarting = 0;
+                                leftEarth = false;
+                                reachedEnd = true;
+                                xPos = getEarthEndingPoint(size) + actualDistance;
+                            }
+                        }
+                        else if(reachedEnd){
+                            xPos = getEarthEndingPoint(size) + actualDistance;
+                            drawSpaceship(xPos, 325, 20, 20, "spaceship", false);
+                        }
+                        else{
+                            xPos = getWhichMap(size);
+                            drawSpaceship(xPos, 325, 20, 20, "spaceship", false);
+                        }
                     }
                 }
                 else{
@@ -136,31 +168,58 @@
                 //setting text
                 textSize(32);
                 fill(#FFFFFF);
-                if(leftEarth){
-                    text("Droga: " + Math.floor(velocity * iteratorLeftEarth / getMultiplier(size) * 10000)/10000 + " km", 950, 60);
+                if(velocityStarting != 0){
+                    if(leftEarth){
+                        text("Droga: " + Math.floor(0.5 * acceleration * iteratorLeftEarth / getMultiplier(size) * 10000)/10000 + " km", 950, 60);
+                    }
+                    else if(reachedEnd){
+                        text("Droga: " + Math.floor(actualDistance / getMultiplier(size) * 10000)/10000 + " km", 950, 60);
+                    }
+                    else{
+                        text("Droga: " + 0 + " km", 950, 60);
+                    }
+                    //setting text
+                    if(started){
+                        text("Prędkość: " + Math.floor(accelerationStarting * iteratorStarting / getMultiplier(size) * 10000)/10000 + " km/h", 950, 95);
+                    }
+                    else if(leftEarth){
+                        text("Prędkość: " + Math.floor(acceleration * iteratorLeftEarth / getMultiplier(size) * 10000)/10000 + " km/h", 950, 95);
+                    }
+                    else{
+                        text("Prędkość: " + 0 + " km/h", 950, 95);
+                    }
+                    //setting text
+                    if(reachedEnd){
+                        text("Czas: " + Math.floor(time * 10000)/10000 + " h", 950, 130);
+                    }
+                    else{
+                        text("Czas: " + Math.floor(iteratorLeftEarth * 10000)/10000 + " h", 950, 130);
+                    }
                 }
-                else if(reachedEnd){
-                    text("Droga: " + Math.floor(velocity * actualTime / getMultiplier(size) * 10000)/10000 + " km", 950, 60);
-                }
-                else{
-                    text("Droga: " + 0 + " km", 950, 60);
-                }
-                //setting text
-                if(started){
-                    text("Prędkość: " + Math.floor(accelerationStarting * iteratorStarting / getMultiplier(size) * 10000)/10000 + " km/h", 950, 95);
-                }
-                else if(leftEarth){
-                    text("Prędkość: " + Math.floor(velocity / getMultiplier(size) * 10000)/10000 + " km/h", 950, 95);
-                }
-                else{
-                    text("Prędkość: " + 0 + " km/h", 950, 95);
-                }
-                //setting text
-                if(reachedEnd){
-                    text("Czas: " + Math.floor(time * 10000)/10000 + " h", 950, 130);
-                }
-                else{
-                    text("Czas: " + Math.floor(iteratorLeftEarth * 10000)/10000 + " h", 950, 130);
+                else if(velocityStarting == 0){
+                    if(started){
+                        text("Droga: " + Math.floor(0.5 * acceleration * iteratorLeftEarth / getMultiplier(size) * 10000)/10000 + " km", 950, 60);
+                    }
+                    else if(reachedEnd){
+                        text("Droga: " + Math.floor(actualDistance / getMultiplier(size) * 10000)/10000 + " km", 950, 60);
+                    }
+                    else{
+                        text("Droga: " + 0 + " km", 950, 60);
+                    }
+                    //setting text
+                    if(started){
+                        text("Prędkość: " + Math.floor(accelerationStarting * iteratorStarting / getMultiplier(size) * 10000)/10000 + " km/h", 950, 95);
+                    }
+                    else{
+                        text("Prędkość: " + 0 + " km/h", 950, 95);
+                    }
+                    //setting text
+                    if(reachedEnd){
+                        text("Czas: " + Math.floor(actualTime * 10000)/10000 + " h", 950, 130);
+                    }
+                    else{
+                        text("Czas: " + Math.floor(iteratorStarting * 10000)/10000 + " h", 950, 130);
+                    }
                 }
             }
 

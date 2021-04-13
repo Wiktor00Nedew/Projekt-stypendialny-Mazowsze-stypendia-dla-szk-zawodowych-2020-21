@@ -4,11 +4,12 @@
     // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
     "version": "0.2.0",
     "configurations": [
+
         {
             "type": "pwa-chrome",
             "request": "launch",
             "name": "Open FreeFall.html",
-            "file": "c:\\Users\\fnede\\OneDrive\\Pulpit\\Wiktor\\Mazovia projekt - Wiktor Nedew ZSLiT nr1\\pages\\FreeFall.html"
+            "file": "c:\\Users\\fnede\\OneDrive\\Pulpit\\Wiktor\\Mazovia projekt - Wiktor Nedew ZSLiT nr1\\pages\\Accelerated.html"
         }
     ]
 }

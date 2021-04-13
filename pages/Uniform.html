@@ -89,10 +89,10 @@
                     size = "small";
                 }
                 else if(actualDistance < 11000){
-                    size = "medium"
+                    size = "medium";
                 }
                 else if(actualDistance < 28406){
-                    size = "big"
+                    size = "big";
                 }
                 veryActualDistance = actualDistance * getMultiplier(size);
                 velocity = veryActualDistance / actualTime;
@@ -160,7 +160,7 @@
                 }
                 //setting text
                 if(reachedEnd){
-                    text("Czas: " + Math.floor(time * 10000)/10000 + " h", 950, 130);
+                    text("Czas: " + Math.floor(actualTime * 10000)/10000 + " h", 950, 130);
                 }
                 else{
                     text("Czas: " + Math.floor(iteratorLeftEarth * 10000)/10000 + " h", 950, 130);
