@@ -260,11 +260,11 @@
             getInputFromTextboxes = function(){
                 if(reseted){
                     if(parseInt(document.getElementById("distanceTxt").value, 10) > 28405 && distanceUnit == "km"){
-                        alert("Podano zbyt dużą wartość! Maksymalna wartość to 28000");
+                        alert("Podano zbyt dużą wartość drogi! Maksymalna wartość to 28000");
                         distance = 24000;
                     }
                     else if(parseInt(document.getElementById("distanceTxt").value, 10) > 28405000 && distanceUnit == "m"){
-                        alert("Podano zbyt dużą wartość! Maksymalna wartość to 28000000");
+                        alert("Podano zbyt dużą wartość drogi! Maksymalna wartość to 28000000");
                         distance = 24000000;
                     }
                     else if(parseInt(document.getElementById("timeTxt").value, 10) >= 2147483647 || parseInt(document.getElementById("timeTxt").value, 10) < 0){

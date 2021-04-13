@@ -55,7 +55,7 @@
             var iteratorLeftEarth = 0;
             var actualVelocity = 0;
             var actualTime = 0;
-            var veryActualDistance = 0;
+            var actualDistance = 0;
 
             var reseted = false;
 
@@ -73,29 +73,25 @@
                 var size;
                 getUnits();
                 if(velocityUnit == "km/h" && timeUnit == "h"){
-                    actualVelocity = velocity;
+                    actualVelocity = velocityEnding - velocityStarting;
                     actualTime = time;
                 }
                 else if(velocityUnit == "m/s" && timeUnit == "s"){
-                    actualDistance = 0.001 * distance;
-                    actualTime = time * (1 / 3600);
-                }
-                else if(velocityUnit == "km/s"){
-                    actualDistance = distance;
+                    actualVelocity = 0.001 * velocity / (1 / 3600);
                     actualTime = time * (1 / 3600);
                 }
                 //setting scale
-                if(actualDistance < 5500){
+                distance = 0.5 * actualVelocity * actualTime;
+                if(distance < 5500){
                     size = "small";
                 }
-                else if(actualDistance < 11000){
+                else if(distance < 11000){
                     size = "medium"
                 }
-                else if(actualDistance < 28406){
+                else if(distance < 28406){
                     size = "big"
                 }
-                veryActualDistance = actualDistance * getMultiplier(size);
-                velocity = veryActualDistance / actualTime;
+                actualDistance = distance * getMultiplier(size);
                 drawBackground(size);
                 if(distance != 0 && time != 0){
                     if(started){
@@ -259,20 +255,23 @@
 
             getInputFromTextboxes = function(){
                 if(reseted){
-                    if(parseInt(document.getElementById("startingVelocityTxt").value, 10) > 28405 && distanceUnit == "km"){
-                        alert("Podano zbyt dużą wartość! Maksymalna wartość to 28000");
-                        distance = 24000;
-                    }
-                    else if(parseInt(document.getElementById("distanceTxt").value, 10) > 28405000 && distanceUnit == "m"){
-                        alert("Podano zbyt dużą wartość! Maksymalna wartość to 28000000");
-                        distance = 24000000;
-                    }
-                    else if(parseInt(document.getElementById("timeTxt").value, 10) >= 2147483647 || parseInt(document.getElementById("timeTxt").value, 10) < 0){
+                    if(parseInt(document.getElementById("timeTxt").value, 10) >= 2147483647 || parseInt(document.getElementById("timeTxt").value, 10) < 0){
                         alert("Wartość czasu nie może wykraczać poza 2147483647");
                         time = 10000;
                     }   
+                    else if((parseInt(document.getElementById("finalVelocityTxt").value, 10) - parseInt(document.getElementById("startingVelocityTxt").value, 10)) * time > 56810 && velocityUnit == "km/h"){
+                        alert("Podano zbyt dużą wartość prędkości! Maksymalna wartość to " + 56810/time);
+                        velocityStarting = 0;
+                        velocityEnding = 56810/time*3.6;
+                    }
+                    else if(parseInt(document.getElementById("finalVelocityTxt").value, 10) - parseInt(document.getElementById("startingVelocityTxt").value, 10)) * time / 3.6 > 56810 && velocityUnit == "m/s"){
+                        alert("Podano zbyt dużą wartość prędkości! Maksymalna wartość to " + 56810/time*3.6);
+                        velocityStarting = 0;
+                        velocityEnding = 56810/time*3.6;
+                    }
                     else{
-                        distance = parseInt(document.getElementById("startingVelocityTxt").value, 10);
+                        velocityStarting = parseInt(document.getElementById("startingVelocityTxt").value, 10);
+                        velocityEnding = parseInt(document.getElementById("finalVelocityTxt").value, 10);
                         time = parseInt(document.getElementById("timeTxt").value, 10);
                     }
                     fillTextboxesWithValues();
