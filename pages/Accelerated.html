@@ -8,7 +8,7 @@
     <script src="../processing.js"></script>
     <meta charset="utf-8">
 </head>
-<body onload="resetClicked(), getInputFromTextboxes(), getUnits()">
+<body onload="resetActivated()">
     <div id="Links">
         <p class="OtherSitesParts"><a class="topLinks" href="Index.html">Strona główna</a></p>
         <p class="OtherSitesParts"><a class="topLinks" href="Accelerated.html">Ruch jednostajnie przyspieszony</a></p>
@@ -24,24 +24,26 @@
         <form id="settings">
             <label id="startingVelocityLabel" name="startingVelocityLabel" class="settingLabel"><b>Początkowa prędkość</b></label> <input type="text" id="startingVelocityTxt" oninput="getInputFromTextboxes()"> <br><br>
             <label id="finalVelocityLabel" name="finalVelocityLabel" class="settingLabel"><b>Końcowa prędkość</b></label> <input type="text" id="finalVelocityTxt" oninput="getInputFromTextboxes()"><br><br>
-            <label class="settingLabel"><b>Jednostka prędkości</b></label> <select id="velocityUnitSelect" onchange="getUnits()"><option value="km">[km/h]</option><option value="m">[m/s]</option></select><br><br><br>
+            <label class="settingLabel"><b>Jednostka prędkości</b></label> <select id="velocityUnitSelect" onchange="getUnits()"><option value="km/h">[km/h]</option><option value="m/s">[m/s]</option></select><br><br><br>
             <label id = "timeLabel" name="timeLabel" class="settingLabel"><b>Czas ruchu</b></label> <input type="text" id="timeTxt" oninput="getInputFromTextboxes()"> <select id="timeUnitSelect" onchange="getUnits()"><option value="h">[h]</option><option value="s">[s]</option></select><br>
-            <button id="startFlightButton" type="button" onclick="startClicked()"><b>Start</b></button><button type="button" id="resetButton" name="resetButton" onclick="resetClicked(), fillTextboxesWithValues()"><b>Reset</b></button><br><br>
+            <button id="startFlightButton" type="button" onclick="startClicked()"><b>Start</b></button><button type="button" id="resetButton" name="resetButton" onclick="resetActivated(), fillTextboxesWithValues()"><b>Reset</b></button><br><br>
         </form>
         <script type="application/processing">
             var partOfAnimation = 0;
             PIimage small;
             PIimage medium;
             PIimage big;
+
             var distance = 0;
             var time = 0;
             var velocity = 0;
+
             var velocityStarting = 0;
             var velocityEnding = 0;
             var acceleration = 0;
 
             var velocityUnit = "km/h";
-            var accelerationUnit = "km/h2"
+
             var timeUnit = "h";
 
             var xPos = 0;
@@ -54,7 +56,7 @@
             var accelerationStarting = 0;
             var timeStarting = 0;
             var iteratorStarting = 0;
-            
+
             var iteratorLeftEarth = 0;
 
             var actualVelocity = 0;
@@ -142,10 +144,10 @@
                         }
                         else if(leftEarth){
                             xPos = getEarthEndingPoint(size) + 0.5 * acceleration * iteratorLeftEarth * iteratorLeftEarth;
-                            iteratorStarting += 0.01;
+                            iteratorLeftEarth += 0.01;
                             drawSpaceship(xPos, 325, 20, 20, "spaceship", true);
-                            if(iteratorStarting >= actualTime){
-                                iteratorStarting = 0;
+                            if(iteratorLeftEarth >= actualTime){
+                                iteratorLeftEarth = 0;
                                 leftEarth = false;
                                 reachedEnd = true;
                                 xPos = getEarthEndingPoint(size) + actualDistance;
@@ -170,7 +172,7 @@
                 fill(#FFFFFF);
                 if(velocityStarting != 0){
                     if(leftEarth){
-                        text("Droga: " + Math.floor(0.5 * acceleration * iteratorLeftEarth / getMultiplier(size) * 10000)/10000 + " km", 950, 60);
+                        text("Droga: " + Math.floor(0.5 * acceleration * iteratorStarting * iteratorStarting / getMultiplier(size) * 10000)/10000 + " km", 950, 60);
                     }
                     else if(reachedEnd){
                         text("Droga: " + Math.floor(actualDistance / getMultiplier(size) * 10000)/10000 + " km", 950, 60);
@@ -183,14 +185,14 @@
                         text("Prędkość: " + Math.floor(accelerationStarting * iteratorStarting / getMultiplier(size) * 10000)/10000 + " km/h", 950, 95);
                     }
                     else if(leftEarth){
-                        text("Prędkość: " + Math.floor(acceleration * iteratorLeftEarth / getMultiplier(size) * 10000)/10000 + " km/h", 950, 95);
+                        text("Prędkość: " + Math.floor((velocityStarting + acceleration * iteratorLeftEarth) / getMultiplier(size) * 10000)/10000 + " km/h", 950, 95);
                     }
                     else{
                         text("Prędkość: " + 0 + " km/h", 950, 95);
                     }
                     //setting text
                     if(reachedEnd){
-                        text("Czas: " + Math.floor(time * 10000)/10000 + " h", 950, 130);
+                        text("Czas: " + Math.floor(actualTime * 10000)/10000 + " h", 950, 130);
                     }
                     else{
                         text("Czas: " + Math.floor(iteratorLeftEarth * 10000)/10000 + " h", 950, 130);
@@ -198,7 +200,7 @@
                 }
                 else if(velocityStarting == 0){
                     if(started){
-                        text("Droga: " + Math.floor(0.5 * acceleration * iteratorLeftEarth / getMultiplier(size) * 10000)/10000 + " km", 950, 60);
+                        text("Droga: " + Math.floor(0.5 * acceleration * iteratorStarting * iteratorStarting / getMultiplier(size) * 10000)/10000 + " km", 950, 60);
                     }
                     else if(reachedEnd){
                         text("Droga: " + Math.floor(actualDistance / getMultiplier(size) * 10000)/10000 + " km", 950, 60);
@@ -247,12 +249,12 @@
                     rect(x + 0.25*width, y - 0.5*height, width - 0.25*width, height);
                     triangle(x + 1.15*width, y - 0.5*height, x + 1.15*width, y + 0.5*height, x + 1.6*width, y);
                         
-    
+
                     fill(120, 120, 120);
                     rect(x + width, y - 0.45*height, 0.2*width, height - 0.1*height);
                     ellipse(x + 1.1*height, y - 0.45*width, 0.2*width, 0.2*height);
                     ellipse(x + 1.1*height, y + 0.45*width, 0.2*width, 0.2*height);
-    
+
                     if(flying){
                         if(partOfAnimation >= 0 && partOfAnimation <= 4){
                             fill(255, 106, 0);
@@ -282,7 +284,7 @@
                     triangle(x + 1.4*width, y + 0.2*height, x + 1.4*width, y - 0.2*height, x + 1.6*width, y);
                     triangle(x + 0.6*width, y - 0.47*height, x + 0.4*width, y - 0.65*height, x - 0.1*width, y - 0.6*height);
                     triangle(x + 0.6*width, y + 0.47*height, x + 0.4*width, y + 0.65*height, x - 0.1*width, y + 0.6*height);
-    
+
                     stroke(255, 0, 0);
                     line(x - 0.1*width, y, x + 0.6*width, y);
 
@@ -324,7 +326,7 @@
                         velocityStarting = 0;
                         velocityEnding = 56810/time*3.6;
                     }
-                    else if(parseInt(document.getElementById("finalVelocityTxt").value, 10) - parseInt(document.getElementById("startingVelocityTxt").value, 10)) * time / 3.6 > 56810 && velocityUnit == "m/s"){
+                    else if((parseInt(document.getElementById("finalVelocityTxt").value, 10) - parseInt(document.getElementById("startingVelocityTxt").value, 10)) * time / 3.6 > 56810 && velocityUnit == "m/s"){
                         alert("Podano zbyt dużą wartość prędkości! Maksymalna wartość to " + 56810/time*3.6);
                         velocityStarting = 0;
                         velocityEnding = 56810/time*3.6;
@@ -363,13 +365,15 @@
                 }
             }
 
-            resetClicked = function(){
+            resetActivated = function(){
                 time = 0;
                 velocityStarting = 0;
                 velocityEnding = 0;
                 document.getElementById("startingVelocityTxt").value = velocityStarting;
                 document.getElementById("finalVelocityTxt").value = velocityEnding;
                 document.getElementById("timeTxt").value = time;
+
+                acceleration = 0;
 
                 velocityUnit = "km/h";
                 timeUnit = "h";
@@ -385,11 +389,12 @@
                 accelerationStarting = 0;
                 timeStarting = 0;
                 iteratorStarting = 0;
-            
+
                 iteratorLeftEarth = 0;
 
                 reseted = true;
                 getInputFromTextboxes();
+
                 getUnits();
             }
 
