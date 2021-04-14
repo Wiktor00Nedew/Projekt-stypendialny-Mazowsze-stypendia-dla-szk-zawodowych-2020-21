@@ -35,7 +35,7 @@
             PIimage big;
 
             var distance = 0;
-            var time = 0;
+            var time = 10;
             var velocity = 0;
 
             var velocityStarting = 0;
@@ -63,6 +63,8 @@
             var actualTime = 0;
             var actualDistance = 0;
 
+            var veryActualVelocity = 0;
+
             var reseted = false;
 
             setup = function(){
@@ -79,15 +81,20 @@
                 var size;
                 getUnits();
                 velocity = velocityEnding - velocityStarting;
-                if(velocityUnit == "km/h" && timeUnit == "h"){
+                if(velocityUnit == "km/h"){
                     actualVelocity = velocity;
+                    timeUnit = "h";
+                    document.getElementById("timeUnitSelect").value = timeUnit;
                     actualTime = time;
                 }
-                else if(velocityUnit == "m/s" && timeUnit == "s"){
+                else if(velocityUnit == "m/s"){
                     actualVelocity = 0.001 * velocity / (1 / 3600);
+                    timeUnit = "s";
+                    document.getElementById("timeUnitSelect").value = timeUnit;
                     actualTime = time * (1 / 3600);
                 }
                 //setting scale
+                
                 distance = 0.5 * actualVelocity * actualTime;
                 if(distance < 5500){
                     size = "small";
@@ -99,8 +106,9 @@
                     size = "big";
                 }
                 actualDistance = distance * getMultiplier(size);
-                acceleration = actualVelocity / actualTime;
-                
+                veryActualVelocity = 2 * actualDistance / actualTime;
+                acceleration = veryActualVelocity / actualTime;
+                console.log(distance);
                 drawBackground(size);
                 if(velocity != 0 && time != 0){
                     if(velocityStarting == 0){
@@ -130,8 +138,8 @@
                     else if(velocityStarting != 0){
                         if(started){
                             distanceStarting = getEarthEndingPoint(size) - getWhichMap(size);
-                            timeStarting = (2 * distanceStarting) / velocityStarting;
-                            accelerationStarting = velocityStarting / timeStarting;
+                            timeStarting = (2 * distanceStarting) / (velocityStarting * getMultiplier(size));
+                            accelerationStarting = velocityStarting * getMultiplier(size) / timeStarting;
                             xPos = getWhichMap(size) + 0.5 * accelerationStarting * iteratorStarting * iteratorStarting;
                             iteratorStarting += 0.01;
                             drawSpaceship(xPos, 325, 20, 20, "spaceship", true);
@@ -172,55 +180,72 @@
                 fill(#FFFFFF);
                 if(velocityStarting != 0){
                     if(leftEarth){
-                        text("Droga: " + Math.floor(0.5 * acceleration * iteratorStarting * iteratorStarting / getMultiplier(size) * 10000)/10000 + " km", 950, 60);
+                        text("Droga: " + Math.floor(0.5 * acceleration * iteratorLeftEarth * iteratorLeftEarth / getMultiplier(size) * 10000)/10000 + " km", 930, 60);
                     }
                     else if(reachedEnd){
-                        text("Droga: " + Math.floor(actualDistance / getMultiplier(size) * 10000)/10000 + " km", 950, 60);
+                        text("Droga: " + Math.floor(actualDistance / getMultiplier(size) * 10000)/10000 + " km", 930, 60);
                     }
                     else{
-                        text("Droga: " + 0 + " km", 950, 60);
+                        text("Droga: " + 0 + " km", 930, 60);
                     }
                     //setting text
                     if(started){
-                        text("Prędkość: " + Math.floor(accelerationStarting * iteratorStarting / getMultiplier(size) * 10000)/10000 + " km/h", 950, 95);
+                        text("Prędkość: " + Math.floor(accelerationStarting * iteratorStarting / getMultiplier(size) * 10000)/10000 + " km/h", 930, 95);
                     }
                     else if(leftEarth){
-                        text("Prędkość: " + Math.floor((velocityStarting + acceleration * iteratorLeftEarth) / getMultiplier(size) * 10000)/10000 + " km/h", 950, 95);
+                        text("Prędkość: " + Math.floor((velocityStarting * getMultiplier(size) + acceleration * iteratorLeftEarth) / getMultiplier(size) * 10000)/10000 + " km/h", 930, 95);
                     }
                     else{
-                        text("Prędkość: " + 0 + " km/h", 950, 95);
+                        text("Prędkość: " + 0 + " km/h", 930, 95);
                     }
                     //setting text
                     if(reachedEnd){
-                        text("Czas: " + Math.floor(actualTime * 10000)/10000 + " h", 950, 130);
+                        text("Czas: " + Math.floor(actualTime * 10000)/10000 + " h", 930, 130);
                     }
                     else{
-                        text("Czas: " + Math.floor(iteratorLeftEarth * 10000)/10000 + " h", 950, 130);
+                        text("Czas: " + Math.floor(iteratorLeftEarth * 10000)/10000 + " h", 930, 130);
+                    }
+                    //setting text
+                    if(started){
+                        text("Przyspieszenie: " + Math.floor(accelerationStarting / getMultiplier(size) * 10000)/10000 + " km/h2", 930, 165);
+                    }
+                    else if(leftEarth){
+                        text("Przyspieszenie: " + Math.floor(acceleration / getMultiplier(size) * 10000)/10000 + " km/h2", 930, 165);
+                    }
+                    else{
+                        text("Przyspieszenie: " + 0 + " km/h2", 930, 165);
                     }
                 }
                 else if(velocityStarting == 0){
                     if(started){
-                        text("Droga: " + Math.floor(0.5 * acceleration * iteratorStarting * iteratorStarting / getMultiplier(size) * 10000)/10000 + " km", 950, 60);
+                        text("Droga: " + Math.floor(0.5 * acceleration * iteratorStarting * iteratorStarting / getMultiplier(size) * 10000)/10000 + " km", 930, 60);
                     }
                     else if(reachedEnd){
-                        text("Droga: " + Math.floor(actualDistance / getMultiplier(size) * 10000)/10000 + " km", 950, 60);
+                        text("Droga: " + Math.floor(actualDistance / getMultiplier(size) * 10000)/10000 + " km", 930, 60);
                     }
                     else{
-                        text("Droga: " + 0 + " km", 950, 60);
+                        text("Droga: " + 0 + " km", 930, 60);
                     }
                     //setting text
                     if(started){
-                        text("Prędkość: " + Math.floor(accelerationStarting * iteratorStarting / getMultiplier(size) * 10000)/10000 + " km/h", 950, 95);
+                        text("Prędkość: " + Math.floor(accelerationStarting * iteratorStarting / getMultiplier(size) * 10000)/10000 + " km/h", 930, 95);
                     }
                     else{
-                        text("Prędkość: " + 0 + " km/h", 950, 95);
+                        text("Prędkość: " + 0 + " km/h", 930, 95);
                     }
                     //setting text
                     if(reachedEnd){
-                        text("Czas: " + Math.floor(actualTime * 10000)/10000 + " h", 950, 130);
+                        text("Czas: " + Math.floor(actualTime * 10000)/10000 + " h", 930, 130);
                     }
                     else{
-                        text("Czas: " + Math.floor(iteratorStarting * 10000)/10000 + " h", 950, 130);
+                        text("Czas: " + Math.floor(iteratorStarting * 10000)/10000 + " h", 930, 130);
+                    }
+                    //setting text
+                    if(started){
+                        text("Przyspieszenie: " + Math.floor(accelerationStarting / getMultiplier(size) * 10000)/10000 + " km/h2", 930, 165);
+                    }
+                    else{
+                        text("Przyspieszenie: " + 0 + " km/h2", 930, 165);
                     }
                 }
             }
@@ -324,12 +349,12 @@
                     else if((parseInt(document.getElementById("finalVelocityTxt").value, 10) - parseInt(document.getElementById("startingVelocityTxt").value, 10)) * time > 56810 && velocityUnit == "km/h"){
                         alert("Podano zbyt dużą wartość prędkości! Maksymalna wartość to " + 56810/time);
                         velocityStarting = 0;
-                        velocityEnding = 56810/time*3.6;
+                        velocityEnding = 56810/time - 10;
                     }
-                    else if((parseInt(document.getElementById("finalVelocityTxt").value, 10) - parseInt(document.getElementById("startingVelocityTxt").value, 10)) * time / 3.6 > 56810 && velocityUnit == "m/s"){
-                        alert("Podano zbyt dużą wartość prędkości! Maksymalna wartość to " + 56810/time*3.6);
+                    else if((parseInt(document.getElementById("finalVelocityTxt").value, 10) - parseInt(document.getElementById("startingVelocityTxt").value, 10)) * time * (1/3600) / 3.6 > 56810 && velocityUnit == "m/s"){
+                        alert("Podano zbyt dużą wartość prędkości! Maksymalna wartość to " + 56810/time * 3.6 / (1/3600));
                         velocityStarting = 0;
-                        velocityEnding = 56810/time*3.6;
+                        velocityEnding = 56810/time*3.6 - 10;
                     }
                     else{
                         velocityStarting = parseInt(document.getElementById("startingVelocityTxt").value, 10);
@@ -366,7 +391,7 @@
             }
 
             resetActivated = function(){
-                time = 0;
+                time = 10;
                 velocityStarting = 0;
                 velocityEnding = 0;
                 document.getElementById("startingVelocityTxt").value = velocityStarting;
