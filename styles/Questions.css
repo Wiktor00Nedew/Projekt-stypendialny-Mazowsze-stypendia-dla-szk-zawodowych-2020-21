@@ -1,0 +1,52 @@
+.buttons{
+    clear: both;
+    width: 250px;
+    height: 60px;
+    margin-left: 70px;
+    margin-top: 40px;
+    padding: 15px 32px;
+    font-size: 24px;
+    background-color: white;
+    border-radius: 5px;
+}
+#button1{
+    width: 250px;
+    height: 60px;
+    margin-left: 70px;
+    margin-top: 40px;
+    padding: 15px 32px;
+    font-size: 24px;
+    background-color: white;
+    border-radius: 5px;
+}
+#testingBox{
+    margin-left: 14.99%;
+    margin-bottom: 50px;
+    width: 70%;
+    height:500px;
+    background-color: rgb(185, 185, 185);
+    border: double 6px rgb(54, 54, 54);
+    border-radius: 20px;
+}   
+#question{
+    margin-left: 70px;
+    margin-top: 30px;
+}
+#nextButton{
+    width: 60px;
+    height: 60px;
+    margin-left: 500px;
+    margin-top: 40px;
+    padding: 15px 15px;
+    font-size: 24px;
+    background-color: white;
+    border-radius: 45px;
+}
+#tryAgain{
+    margin-left: 300px;
+    margin-top: 30px;
+    color: red;
+}
+.titles{
+    display: inline;
+}

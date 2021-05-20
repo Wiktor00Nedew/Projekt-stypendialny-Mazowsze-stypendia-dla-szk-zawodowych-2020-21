@@ -5,11 +5,12 @@
 <head>
     <title>Ruch jednostajny</title>
     <link rel="stylesheet" href="../styles/Uniform.css">
+    <link rel="stylesheet" href="../styles/Questions.css">
     <script src="../processing.js"></script>
     <meta charset="utf-8">
 </head>
 
-<body onload="resetClicked(), getInputFromTextboxes(), getUnits()">
+<body onload="resetClicked(), getInputFromTextboxes(), getUnits()" id="uniformBody">
     <div id="Links">
         <p class="OtherSitesParts"><a class="topLinks" href="Index.html">Strona główna</a></p>
         <p class="OtherSitesParts"><a class="topLinks" href="Accelerated.html">Ruch jednostajnie przyspieszony</a></p>
@@ -346,6 +347,13 @@
             <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
             <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
         </p>
+        <form id="testingBox">
+            <br><h2 id="question" class="titles">Tytuł</h2><h2 id="tryAgain" class="titles"></h2><br>
+            <button id="button1" type="button" class="buttons">Odp 1</button><br>
+            <button id="button2" type="button" class="buttons">Odp 2</button><br>
+            <button id="button3" type="button" class="buttons">Odp 3</button><br>
+            <button id="button4" type="button" class="buttons">Odp 4</button><button id="nextButton" type="button" class="buttons">></button>
+        </form>
     </div>
     <div id="bottomPart">
         <p id="allBottomLinks">
@@ -362,6 +370,8 @@
             Projekt został wykonany w ramach programu stypendialnego: "Mazowia, stypendia dla szkół zawodowych"
         </p>
     </div>
+    <script src="../jquery-3.6.0.min.js"></script>
+    <script src="../script.js"></script>
 </body>
 
 <html>
