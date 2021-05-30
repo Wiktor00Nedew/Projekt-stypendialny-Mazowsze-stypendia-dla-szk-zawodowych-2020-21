@@ -69,3 +69,21 @@ body{
     color:white;
     margin-right: 1%;
 }
+#title{
+    margin-left: 35%;
+    margin-right: 30%;
+    margin-top: 0;
+    border-top: solid;
+    border-width: 20px;
+    border-color: #beffbe;
+}
+header{
+    background-color: #beffbe;
+}
+p.text{
+    padding: 15px;
+    font-size: larger;
+}
+li{
+    font-size: larger;
+}
