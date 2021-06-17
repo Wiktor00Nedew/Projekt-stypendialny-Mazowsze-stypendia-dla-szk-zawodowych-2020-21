@@ -1,6 +1,6 @@
 .buttons{
     clear: both;
-    width: 250px;
+    width: 400px;
     height: 60px;
     margin-left: 70px;
     margin-top: 40px;
@@ -10,7 +10,7 @@
     border-radius: 5px;
 }
 #button1{
-    width: 250px;
+    width: 400px;
     height: 60px;
     margin-left: 70px;
     margin-top: 40px;
@@ -29,13 +29,13 @@
     border-radius: 20px;
 }   
 #question{
-    margin-left: 70px;
+    /*margin-left: 70px;*/
     margin-top: 30px;
 }
 #nextButton{
     width: 60px;
     height: 60px;
-    margin-left: 500px;
+    margin-left: 300px;
     margin-top: 40px;
     padding: 15px 15px;
     font-size: 24px;

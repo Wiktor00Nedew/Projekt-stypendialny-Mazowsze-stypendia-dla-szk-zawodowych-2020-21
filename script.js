@@ -1,23 +1,34 @@
 var acceleratedQuestions = {
-    questions: ['question1', 'question2', 'question3'],
-    trueAnswers: ['b', 'd', 'c'],
-    answers1: ['a', 'b', 'c', 'd'],
-    answers2: ['a', 'b', 'c', 'd'],
-    answers3: ['a', 'b', 'c', 'd'],
+    questions: [
+    'Ile minimalnie sił musi działać na ciało, aby poruszało się ono ruchem jednostajnie przyspieszonym?',
+    'Prękość statku wzrosła w 60 km/h w czasie 4 godzin. Ile wynosi przyspieszenie?', 
+    'Jeżeli prędkość ciała się zmniejszyła, to przyspieszenie jest:'
+    ],
+    trueAnswers: ['1', '15 km/h2', 'ujemne'],
+    answers1: ['1', '2', '3', '4'],
+    answers2: ['60 km/h2', '20 km/h2', '15 km/h2', '5 km/h2'],
+    answers3: ['równe 0', 'dodatnie', 'ujemne', 'zbyt mało danych'],
     currentQuestion: 0
 };
 
 var uniformQuestions = {
-    questions: ['question1', 'question2', 'question3'],
-    trueAnswers: ['b', 'd', 'c'],
-    answers1: ['a', 'b', 'c', 'd'],
-    answers2: ['a', 'b', 'c', 'd'],
-    answers3: ['a', 'b', 'c', 'd'],
+    questions: [
+    'Droga przebyta przez ciało w ruchu jednostajnym wynosi 20 km, czas ruchu to 2h. Jaka jest prędkość tego ciała?', 
+    'Ruch jednostajny występuje wtedy, gdy na ciało działa:', 
+    'Gdy droga się wydłuża, a czas pozostaje bez zmian i jest różny od zera, to:'
+    ],
+    trueAnswers: ['10 km/h', '0 sił', 'prędkość wzrasta'],
+    answers1: ['25 km/h', '20 km/h', '10 km/h', '40 km/h'],
+    answers2: ['1 niezrównoważona siła', '2 niezrównoważone siły', '3 nierównoważące się siły', '0 sił'],
+    answers3: ['prędkość wzrasta', 'prędkość maleje', 'prękość się nie zmienia', 'prędkość jest równa zero'],
     currentQuestion: 0
 };
 
 var freeFallQuestions = {
-    questions: ['question1', 'question2', 'question3'],
+    questions: [
+        '',
+        'question2',
+        'question3'],
     trueAnswers: ['b', 'd', 'c'],
     answers1: ['a', 'b', 'c', 'd'],
     answers2: ['a', 'b', 'c', 'd'],
@@ -167,6 +178,7 @@ function on_click(buttonNumber, object){
 }
 
 function load_content(questionNumber, object){
+    $('h2#question').text(object.questions[questionNumber]);
     $('button#nextButton').attr('disabled', true);
     let t;
     let rd;
