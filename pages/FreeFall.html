@@ -25,7 +25,7 @@
         </header>
         <form id="settings">
             <label name="heightLabel" id="heightLabel"><b>Wysokość spadku</b></label>&NonBreakingSpace;
-            <input name="heightTxt" id="heightTxt" type="text" oninput="getTextboxValue()"><label>[m]</label> <select id="planet" name="planetChooser" onchange="resetClicked()"><option value="earth">Ziemia [9,81 m/s2]</option> <option value="moon">Księżyc [1,62 m/s2]</option> <option value="mars">Mars [3,70 m/s2]</option></select><br><br>
+            <input name="heightTxt" id="heightTxt" type="text" oninput="getTextboxValue()"><label>[m]</label> <select id="planet" name="planetChooser" onchange="resetClicked()"><option value="earth">Ziemia [9,81 m/s<sup>2</sup>]</option> <option value="moon">Księżyc [1,62 m/s<sup>2</sup>]</option> <option value="mars">Mars [3,70 m/s<sup>2</sup>]</option></select><br><br>
             <button name="startFallBtn" id="startFallBtn" onclick="startClicked()" type="button"><b>start</b></button><button type="button" id="resetButton" name="resetButton" onclick="resetClicked()"><b>Reset</b></button><br><br>
         </form>
         <script type="application/processing">
@@ -135,15 +135,40 @@
             }
         </script>
         <canvas></canvas>
-        <p><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-            <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-            <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-            <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-            <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-            <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-            <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-            <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+        <p id="star">*Symulacja ma jedynie przedstawiać zjawisko swobodnego spadku. Wysokości są przybliżone. Pominięte są także wszystkie siły oporu.</p>
+        <h2 id="ex1" class="ex">1) Zaobserwuj jak na symulacji zmienia się prędkość i przyspieszenie rakiety w zależoności od tego na jakiej planecie się znajduje oraz od wysokości, z jakiej spada.
+        </h2>
+        <p class="text">
+            W tym rozdziale skupimy się na zjawisku swobodnego spadku. Jest on specyficznym typem ruchu jednostajnie przyspiszonego, ponieważ wywołuje go siła grawitacji planety lub na przykład księżyca. 
+            Jedyną przyspieszenie w tym ruchu jest stałe i zależne od planety, na której wystęuje.<br><br>
+            <img src="../images/solar system.jpg"><br><br>
+            W symulacji mamy do wyboru Ziemię, Księżyc i Marsa. Każde z tych ciał niebieskich ma inną grawitację, więc przyspieszenie grawitacyjne (ozanczane literą <b>g</b>) jest różne.
+            Dla Ziemi wynosi ono ok. 9.81 m/s<sup>2</sup>, dla Marsa ok. 3.70 m/s<sup>2</sup>, a dla Księzyca ok. 1.62 m/s<sup>2</sup>.
+            <br><br>
+            Tak jak w ruchu jednostajnie przyspieszonym najczęściej stosuje się wzory na prędkość, czas ruchu i drogę. Wzór na przyspieszenie ne jest potrzebny, bo jest ono zdefiniowane przez warunki układu.
+            <br><br><img src="../images/predkosc_wzor.png"><br><br>
+            Pierwszy jest wzór na zmianę prędkości. Jest ona równa <i>prędkość końcowa <b>-</b> prędkość początkowa</i>.
+            <br><br><img src="../images/czas_wzor.png"><br><br>
+            Po przekształceniu wzoru uzyskujemy wzór na zmianę czasu. Zazwyczaj zakłada się, że czas początkowy wynisił 0 i wtedy wzór prezentuje się tak:
+            <br><br><img src="../images/czas2_wzor.png"><br><br><br>
+            <br><br><img src="../images/droga_wzor.png"><br><br>
+            Ostatnim wzorem jest wzór na drogę. Jest on o tyle niestandardowy, że najłatwiej wyliczyć go z wykresu prędkości od czasu, jak na rysunku poniżej:
+            <br><br><img src="../images/wykres2.bmp"><br><br>
+            Droga w tym ruchu jest po prostu równa polu trójkąta pod wykresem, czyli jak we wzorze powyżej, pod warunkiem, że zarówno prędkość jak i czas początkowy jest równy 0. 
+            Wzór wtedy wygląda tak jak poniżej:
+            <br><br><img src="../images/droga2_wzor.png"><br><br>
         </p>
+        <h2 class="ex">Podsumowanie:</h2>
+        <p class="text">
+            <ol>
+                <li>Swobodny spadek jest powodowany siłą grawitacji.</li>
+                <li>Występuje on, gdy na ciało nie działają siły oporu.</li>
+                <li>Na Ziemi, której przyspieszenie grawitacyjne jest równe ok. 9.81 m/s<sup>2</sup>, prędkość rakiety wzrata w każdej sekundzie o 9.81 m/s.</li>
+                <li>Przyspieszenie grawitacyjne zapisujemy przy uzyciu litery <b>g</b>.</li>
+            </ol>
+        </p>
+        <br><br><br>
+        <h2 class="ex">Zadania:</h2>
         <form id="testingBox">
             <br><h2 id="question" class="titles">Tytuł</h2><h2 id="tryAgain" class="titles"></h2><br>
             <button id="button1" type="button" class="buttons">Odp 1</button><br>

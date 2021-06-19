@@ -123,3 +123,15 @@ header{
 canvas{
     outline: none;
 }
+.ex{
+    padding-left: 10px;
+    padding-top: 10px;
+}
+p.text, li{
+    padding-left: 15px;
+    font-size: larger;
+}
+p#star{
+    text-align: right;
+    padding-right: 20px;
+}

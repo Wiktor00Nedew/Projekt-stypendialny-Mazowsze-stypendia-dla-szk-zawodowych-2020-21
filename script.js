@@ -26,13 +26,13 @@ var uniformQuestions = {
 
 var freeFallQuestions = {
     questions: [
-        '',
-        'question2',
-        'question3'],
-    trueAnswers: ['b', 'd', 'c'],
-    answers1: ['a', 'b', 'c', 'd'],
-    answers2: ['a', 'b', 'c', 'd'],
-    answers3: ['a', 'b', 'c', 'd'],
+        'Jeżeli ciało spada z wysokości 1000 m na Ziemi, to czas spadku wynosi:',
+        'Swobodny spadek jest wywoływany siłą: ',
+        'Księżyc ma przyspieszenie grawitacyjne: '],
+    trueAnswers: ['ok. 203,87 s', 'grawitacji', 'mniejsze niż Ziemia i Mars'],
+    answers1: ['ok. 203,87 s', 'ok. 102,53 s', 'ok. 210,6 s', 'ok. 57,3 s'],
+    answers2: ['sprężystości', 'grawitacji', 'nacisku', 'reakcji podłoża'],
+    answers3: ['większe niż Ziemia', 'większe niż Mars', 'mniejsze niż Ziemia, ale większe niż Mars', 'mniejsze niż Ziemia i Mars'],
     currentQuestion: 0
 };
 
