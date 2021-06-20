@@ -69,3 +69,22 @@ body{
     color:white;
     margin-right: 1%;
 }
+.ex{
+    padding-left: 10px;
+    padding-top: 10px;
+}
+p.text, li{
+    padding-left: 15px;
+    font-size: larger;
+}
+#title{
+    margin-left: 43%;
+    margin-right: 30%;
+    margin-top: 0;
+    border-top: solid;
+    border-width: 20px;
+    border-color: #beffbe;
+}
+header{
+    background-color: #beffbe;
+}
